@@ -1,0 +1,1123 @@
+mysql> USE PSF3;
+ERROR 1049 (42000): Unknown database 'psf3'
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| instagram_clone_db |
+| mysql              |
+| performance_schema |
+| pfs3               |
+| sys                |
++--------------------+
+6 rows in set (0.04 sec)
+
+mysql> USE PFS3;
+Database changed
+mysql> SHOW TABLES;
++-----------------+
+| Tables_in_pfs3  |
++-----------------+
+| city            |
+| country         |
+| countrylanguage |
+| department      |
+| departments     |
+| employee        |
+| employees       |
+| project         |
+| projects        |
++-----------------+
+9 rows in set (0.02 sec)
+
+mysql> USE INSTAGRAM_CLONE_DB;
+Database changed
+
+mysql> SELECT DAYNAME(CREATED_AT) AS DAY_OF_THE_WEEK,
+    -> COUNT(*) AS TOTAL_COUNT
+    -> FROM USERS
+    -> GROUP BY DAY_OF_THE_WEEK
+    -> ORDER BY TOTAL_COUNT DESC;
++-----------------+-------------+
+| DAY_OF_THE_WEEK | TOTAL_COUNT |
++-----------------+-------------+
+| Thursday        |          16 |
+| Sunday          |          16 |
+| Friday          |          15 |
+| Tuesday         |          14 |
+| Monday          |          14 |
+| Wednesday       |          13 |
+| Saturday        |          12 |
++-----------------+-------------+
+7 rows in set (0.02 sec)
+
+mysql> -- FIND THE USERS WHO HAVE NEVER POSTED A SINGLE PHOTO.
+mysql> SELECT USERS.ID,USERNAME,USERS.CREATED_AT AS USER_JOINING_DATE
+    -> FROM USERS LEFT JOIN PHOTOS
+    -> ON USERS.ID = PHOTOS.USER_ID
+    -> WHERE PHOTOS.USER_ID IS NULL;
++----+---------------------+---------------------+
+| ID | USERNAME            | USER_JOINING_DATE   |
++----+---------------------+---------------------+
+|  5 | Aniya_Hackett       | 2016-12-07 01:04:39 |
+|  7 | Kasandra_Homenick   | 2016-12-12 06:50:08 |
+| 14 | Jaclyn81            | 2017-02-06 23:29:16 |
+| 21 | Rocio33             | 2017-01-23 11:51:15 |
+| 24 | Maxwell.Halvorson   | 2017-04-18 02:32:44 |
+| 25 | Tierra.Trantow      | 2016-10-03 12:49:21 |
+| 34 | Pearl7              | 2016-07-08 21:42:01 |
+| 36 | Ollie_Ledner37      | 2016-08-04 15:42:20 |
+| 41 | Mckenna17           | 2016-07-17 17:25:45 |
+| 45 | David.Osinski47     | 2017-02-05 21:23:37 |
+| 49 | Morgan.Kassulke     | 2016-10-30 12:42:31 |
+| 53 | Linnea59            | 2017-02-07 07:49:34 |
+| 54 | Duane60             | 2016-12-21 04:43:38 |
+| 57 | Julien_Schmidt      | 2017-02-02 23:12:48 |
+| 66 | Mike.Auer39         | 2016-07-01 17:36:15 |
+| 68 | Franco_Keebler64    | 2016-11-13 20:09:27 |
+| 71 | Nia_Haag            | 2016-05-14 15:38:50 |
+| 74 | Hulda.Macejkovic    | 2017-01-25 17:17:28 |
+| 75 | Leslie67            | 2016-09-21 05:14:01 |
+| 76 | Janelle.Nikolaus81  | 2016-07-21 09:26:09 |
+| 80 | Darby_Herzog        | 2016-05-06 00:14:21 |
+| 81 | Esther.Zulauf61     | 2017-01-14 17:02:34 |
+| 83 | Bartholome.Bernhard | 2016-11-06 02:31:23 |
+| 89 | Jessyca_West        | 2016-09-14 23:47:05 |
+| 90 | Esmeralda.Mraz57    | 2017-03-03 11:52:27 |
+| 91 | Bethany20           | 2016-06-03 23:31:53 |
++----+---------------------+---------------------+
+26 rows in set (0.01 sec)
+
+mysql> SELECT ID,USERNAME,CREATED_AT
+    -> FROM USERS
+    -> ORDER BY CREATED_AT ASC
+    -> LIMIT 5;
++----+------------------+---------------------+
+| ID | USERNAME         | CREATED_AT          |
++----+------------------+---------------------+
+| 80 | Darby_Herzog     | 2016-05-06 00:14:21 |
+| 67 | Emilio_Bernier52 | 2016-05-06 13:04:30 |
+| 63 | Elenor88         | 2016-05-08 01:30:41 |
+| 95 | Nicole71         | 2016-05-09 17:30:22 |
+| 38 | Jordyn.Jacobson2 | 2016-05-14 07:56:26 |
++----+------------------+---------------------+
+5 rows in set (0.01 sec)
+
+mysql> -- MOST LIKES ON A SINGLE PHOTO.
+mysql> SHOW TABLES;
++------------------------------+
+| Tables_in_instagram_clone_db |
++------------------------------+
+| comments                     |
+| follows                      |
+| likes                        |
+| photo_tags                   |
+| photos                       |
+| tags                         |
+| users                        |
++------------------------------+
+7 rows in set (0.01 sec)
+
+mysql> SELECT USERS.ID AS USER_ID,
+    -> USERNAME,
+    -> PHOTOS.ID AS PHOTO_ID,
+    -> PHOTOS.IMAGE_URL,
+    -> COUNT(*) AS TOTAL_LIKES_COUNT
+    -> FROM PHOTOS
+    -> JOIN LIKES
+    -> ON PHOTOS.ID = LIKES.PHOTO_ID
+    -> JOIN USERS
+    -> ON USERS.ID = PHOTOS.USER_ID
+    -> GROUP BY PHOTOS.ID
+    -> ORDER BY TOTAL_LIKES_COUNT DESC;
++---------+-----------------------+----------+------------------------+-------------------+
+| USER_ID | USERNAME              | PHOTO_ID | IMAGE_URL              | TOTAL_LIKES_COUNT |
++---------+-----------------------+----------+------------------------+-------------------+
+|      52 | Zack_Kemmer93         |      145 | https://jarret.name    |                48 |
+|      46 | Malinda_Streich       |      127 | https://celestine.name |                43 |
+|      65 | Adelle96              |      182 | https://dorcas.biz     |                43 |
+|      44 | Seth46                |      123 | http://shannon.org     |                42 |
+|      10 | Presley_McClure       |       30 | http://kenny.com       |                41 |
+|      16 | Annalise.McKenzie16   |       52 | https://hershel.com    |                41 |
+|      20 | Delpha.Kihn           |       61 | https://dejon.name     |                41 |
+|      55 | Meggie_Doyle          |      147 | https://adela.com      |                41 |
+|      63 | Elenor88              |      174 | https://delbert.net    |                41 |
+|      72 | Kathryn80             |      192 | https://anahi.info     |                41 |
+|     100 | Javonte83             |      256 | https://kaela.name     |                41 |
+|       3 | Harley_Lind18         |       13 | https://fred.com       |                40 |
+|      32 | Irwin.Larson          |       97 | https://carolanne.com  |                40 |
+|      58 | Aurelie71             |      153 | http://janie.com       |                40 |
+|      59 | Cesar93               |      161 | https://clare.org      |                40 |
+|      94 | Damon35               |      244 | http://freeda.biz      |                40 |
+|      13 | Alexandro35           |       44 | http://golden.org      |                39 |
+|      22 | Kenneth64             |       62 | https://rigoberto.net  |                39 |
+|      23 | Eveline95             |       66 | http://lionel.net      |                39 |
+|      33 | Yvette.Gottlieb91     |      100 | https://brook.com      |                39 |
+|      37 | Yazmin_Mills95        |      107 | https://everette.biz   |                39 |
+|      39 | Kelsi26               |      110 | https://cesar.com      |                39 |
+|      43 | Janet.Armstrong       |      118 | http://whitney.net     |                39 |
+|      43 | Janet.Armstrong       |      119 | http://garrison.name   |                39 |
+|      52 | Zack_Kemmer93         |      144 | https://roderick.name  |                39 |
+|      64 | Florence99            |      180 | https://vivien.com     |                39 |
+|      77 | Donald.Fritsch        |      199 | http://linnie.com      |                39 |
+|      77 | Donald.Fritsch        |      201 | https://jane.net       |                39 |
+|      78 | Colten.Harris76       |      205 | http://ted.info        |                39 |
+|      87 | Rick29                |      227 | http://nigel.biz       |                39 |
+|       1 | Kenton_Kirlin         |        3 | http://vicky.biz       |                38 |
+|       1 | Kenton_Kirlin         |        4 | http://oleta.net       |                38 |
+|       2 | Andre_Purdy85         |        7 | https://selina.name    |                38 |
+|       8 | Tabitha_Schamberger11 |       23 | http://madison.net     |                38 |
+|      11 | Justina.Gaylord27     |       37 | http://camille.name    |                38 |
+|      12 | Dereck65              |       41 | https://adella.net     |                38 |
+|      23 | Eveline95             |       63 | http://megane.biz      |                38 |
+|      23 | Eveline95             |       69 | http://harvey.info     |                38 |
+|      28 | Dario77               |       81 | https://jacinto.org    |                38 |
+|      58 | Aurelie71             |      150 | http://ruben.net       |                38 |
+|      58 | Aurelie71             |      155 | http://pearl.info      |                38 |
+|      59 | Cesar93               |      162 | https://malcolm.name   |                38 |
+|      61 | Jayson65              |      169 | http://annabelle.org   |                38 |
+|      65 | Adelle96              |      183 | http://hettie.net      |                38 |
+|      73 | Jaylan.Lakin          |      196 | http://stan.biz        |                38 |
+|      77 | Donald.Fritsch        |      197 | http://jarred.net      |                38 |
+|      82 | Aracely.Johnston98    |      210 | http://penelope.info   |                38 |
+|       4 | Arely_Bogan63         |       16 | https://maudie.org     |                37 |
+|      12 | Dereck65              |       40 | https://tyshawn.com    |                37 |
+|      13 | Alexandro35           |       42 | https://cielo.info     |                37 |
+|      13 | Alexandro35           |       43 | https://easter.net     |                37 |
+|      15 | Billy52               |       49 | http://estevan.org     |                37 |
+|      17 | Norbert_Carroll35     |       57 | http://kirk.org        |                37 |
+|      19 | Hailee26              |       59 | http://rylan.biz       |                37 |
+|      23 | Eveline95             |       71 | https://tito.name      |                37 |
+|      29 | Jaime53               |       87 | http://emery.net       |                37 |
+|      44 | Seth46                |      120 | https://olga.org       |                37 |
+|      48 | Granville_Kutch       |      133 | https://edyth.com      |                37 |
+|      64 | Florence99            |      178 | http://devon.info      |                37 |
+|      77 | Donald.Fritsch        |      198 | http://jovanny.net     |                37 |
+|      78 | Colten.Harris76       |      203 | http://trever.org      |                37 |
+|      84 | Alysa22               |      212 | http://cynthia.info    |                37 |
+|      87 | Rick29                |      225 | https://celestino.name |                37 |
+|      88 | Clint27               |      230 | http://destini.net     |                37 |
+|      92 | Frederik_Rice         |      241 | https://sid.biz        |                37 |
+|      96 | Keenan.Schamberger60  |      248 | https://maggie.info    |                37 |
+|       1 | Kenton_Kirlin         |        2 | https://shanon.org     |                36 |
+|       6 | Travon.Waters         |       17 | http://annamae.name    |                36 |
+|       6 | Travon.Waters         |       21 | https://lisa.com       |                36 |
+|       8 | Tabitha_Schamberger11 |       25 | http://darron.info     |                36 |
+|       9 | Gus93                 |       28 | http://vance.org       |                36 |
+|      16 | Annalise.McKenzie16   |       53 | http://collin.com      |                36 |
+|      17 | Norbert_Carroll35     |       56 | http://tristin.name    |                36 |
+|      18 | Odessa2               |       58 | https://modesta.info   |                36 |
+|      29 | Jaime53               |       85 | http://fabiola.org     |                36 |
+|      29 | Jaime53               |       90 | https://fanny.net      |                36 |
+|      33 | Yvette.Gottlieb91     |      101 | https://gust.net       |                36 |
+|      35 | Lennie_Hartmann40     |      106 | https://trycia.com     |                36 |
+|      42 | Maya.Farrell          |      113 | https://darwin.net     |                36 |
+|      43 | Janet.Armstrong       |      116 | https://maymie.net     |                36 |
+|      59 | Cesar93               |      166 | http://kaleigh.biz     |                36 |
+|      62 | Ressie_Stanton46      |      171 | https://dameon.name    |                36 |
+|      64 | Florence99            |      177 | https://nolan.name     |                36 |
+|      67 | Emilio_Bernier52      |      186 | http://sheila.com      |                36 |
+|      69 | Karley_Bosco          |      189 | http://reva.com        |                36 |
+|      70 | Erick5                |      190 | https://llewellyn.info |                36 |
+|      84 | Alysa22               |      211 | https://dimitri.info   |                36 |
+|      86 | Delfina_VonRueden68   |      222 | http://germaine.org    |                36 |
+|     100 | Javonte83             |      257 | http://dedrick.info    |                36 |
+|       4 | Arely_Bogan63         |       14 | https://gerhard.biz    |                35 |
+|       6 | Travon.Waters         |       19 | http://miracle.info    |                35 |
+|       6 | Travon.Waters         |       20 | http://emmet.com       |                35 |
+|       8 | Tabitha_Schamberger11 |       24 | http://annie.name      |                35 |
+|      11 | Justina.Gaylord27     |       36 | http://kennith.net     |                35 |
+|      15 | Billy52               |       48 | http://tressie.info    |                35 |
+|      17 | Norbert_Carroll35     |       55 | https://deondre.com    |                35 |
+|      23 | Eveline95             |       67 | http://danyka.net      |                35 |
+|      26 | Josianne.Friesen      |       77 | https://jarret.info    |                35 |
+|      27 | Darwin29              |       80 | https://holden.com     |                35 |
+|      28 | Dario77               |       82 | https://geoffrey.info  |                35 |
+|      28 | Dario77               |       84 | https://trinity.biz    |                35 |
+|      33 | Yvette.Gottlieb91     |      103 | http://barton.name     |                35 |
+|      42 | Maya.Farrell          |      112 | https://lina.biz       |                35 |
+|      43 | Janet.Armstrong       |      117 | http://joanie.name     |                35 |
+|      46 | Malinda_Streich       |      126 | http://lia.biz         |                35 |
+|      50 | Gerard79              |      136 | https://marianna.info  |                35 |
+|      51 | Mariano_Koch3         |      137 | https://roel.org       |                35 |
+|      59 | Cesar93               |      158 | http://leo.com         |                35 |
+|      65 | Adelle96              |      181 | https://hilda.info     |                35 |
+|      78 | Colten.Harris76       |      204 | http://emilie.net      |                35 |
+|      78 | Colten.Harris76       |      206 | http://keshawn.org     |                35 |
+|      85 | Milford_Gleichner42   |      213 | http://princess.org    |                35 |
+|      88 | Clint27               |      232 | https://brittany.org   |                35 |
+|      88 | Clint27               |      234 | https://devonte.name   |                35 |
+|      93 | Willie_Leuschke       |      243 | https://erik.com       |                35 |
+|       4 | Arely_Bogan63         |       15 | https://sherwood.net   |                34 |
+|      12 | Dereck65              |       39 | http://ralph.name      |                34 |
+|      13 | Alexandro35           |       45 | http://kendall.biz     |                34 |
+|      13 | Alexandro35           |       46 | https://glenda.info    |                34 |
+|      23 | Eveline95             |       64 | http://emmalee.org     |                34 |
+|      23 | Eveline95             |       68 | https://woodrow.com    |                34 |
+|      23 | Eveline95             |       70 | http://aiden.org       |                34 |
+|      23 | Eveline95             |       74 | http://verner.org      |                34 |
+|      26 | Josianne.Friesen      |       78 | http://einar.net       |                34 |
+|      26 | Josianne.Friesen      |       79 | http://terry.info      |                34 |
+|      29 | Jaime53               |       86 | https://bryce.org      |                34 |
+|      29 | Jaime53               |       91 | http://lottie.net      |                34 |
+|      30 | Kaley9                |       94 | http://virginia.org    |                34 |
+|      32 | Irwin.Larson          |       98 | https://margarita.info |                34 |
+|      32 | Irwin.Larson          |       99 | https://kayden.biz     |                34 |
+|      33 | Yvette.Gottlieb91     |      102 | http://bridie.name     |                34 |
+|      44 | Seth46                |      121 | https://donavon.org    |                34 |
+|      46 | Malinda_Streich       |      124 | http://kendrick.net    |                34 |
+|      47 | Harrison.Beatty50     |      128 | http://laila.info      |                34 |
+|      50 | Gerard79              |      134 | https://isaias.biz     |                34 |
+|      51 | Mariano_Koch3         |      138 | http://julia.info      |                34 |
+|      51 | Mariano_Koch3         |      141 | http://quinten.info    |                34 |
+|      58 | Aurelie71             |      149 | https://lila.biz       |                34 |
+|      58 | Aurelie71             |      154 | http://myron.org       |                34 |
+|      62 | Ressie_Stanton46      |      170 | http://ephraim.com     |                34 |
+|      63 | Elenor88              |      173 | https://jasmin.biz     |                34 |
+|      77 | Donald.Fritsch        |      200 | http://dino.name       |                34 |
+|      82 | Aracely.Johnston98    |      209 | https://humberto.org   |                34 |
+|      86 | Delfina_VonRueden68   |      217 | https://timmy.info     |                34 |
+|      86 | Delfina_VonRueden68   |      221 | http://lucio.org       |                34 |
+|      88 | Clint27               |      231 | https://mariano.net    |                34 |
+|      88 | Clint27               |      233 | https://madaline.name  |                34 |
+|      88 | Clint27               |      235 | https://blanche.net    |                34 |
+|      96 | Keenan.Schamberger60  |      249 | https://cecilia.net    |                34 |
+|      98 | Imani_Nicolas17       |      252 | http://jennie.com      |                34 |
+|       3 | Harley_Lind18         |       11 | https://marcelino.com  |                33 |
+|       9 | Gus93                 |       29 | http://ignacio.net     |                33 |
+|      10 | Presley_McClure       |       32 | http://kurtis.info     |                33 |
+|      23 | Eveline95             |       65 | http://nathan.net      |                33 |
+|      23 | Eveline95             |       72 | https://julian.net     |                33 |
+|      26 | Josianne.Friesen      |       75 | https://elmore.org     |                33 |
+|      29 | Jaime53               |       88 | https://marian.biz     |                33 |
+|      35 | Lennie_Hartmann40     |      105 | https://mariam.com     |                33 |
+|      38 | Jordyn.Jacobson2      |      109 | http://arthur.name     |                33 |
+|      40 | Rafael.Hickle2        |      111 | http://charlie.com     |                33 |
+|      44 | Seth46                |      122 | http://moses.biz       |                33 |
+|      46 | Malinda_Streich       |      125 | https://carey.com      |                33 |
+|      51 | Mariano_Koch3         |      140 | https://earline.info   |                33 |
+|      52 | Zack_Kemmer93         |      146 | https://cathrine.com   |                33 |
+|      56 | Peter.Stehr0          |      148 | https://demarco.com    |                33 |
+|      58 | Aurelie71             |      152 | http://rickey.name     |                33 |
+|      59 | Cesar93               |      157 | https://carmella.com   |                33 |
+|      59 | Cesar93               |      163 | https://lesly.com      |                33 |
+|      64 | Florence99            |      176 | https://jessy.name     |                33 |
+|      65 | Adelle96              |      185 | http://jody.biz        |                33 |
+|      86 | Delfina_VonRueden68   |      220 | https://colt.org       |                33 |
+|      87 | Rick29                |      226 | http://violet.info     |                33 |
+|      93 | Willie_Leuschke       |      242 | https://jadyn.name     |                33 |
+|      95 | Nicole71              |      245 | http://ayden.name      |                33 |
+|      99 | Alek_Watsica          |      255 | https://xzavier.org    |                33 |
+|      11 | Justina.Gaylord27     |       34 | https://henderson.com  |                32 |
+|      11 | Justina.Gaylord27     |       35 | http://bonnie.info     |                32 |
+|      19 | Hailee26              |       60 | https://noemie.com     |                32 |
+|      26 | Josianne.Friesen      |       76 | http://kasandra.com    |                32 |
+|      29 | Jaime53               |       89 | https://kennedi.org    |                32 |
+|      32 | Irwin.Larson          |       96 | http://roger.info      |                32 |
+|      42 | Maya.Farrell          |      114 | https://aliyah.biz     |                32 |
+|      52 | Zack_Kemmer93         |      142 | https://dolores.org    |                32 |
+|      58 | Aurelie71             |      151 | https://alia.name      |                32 |
+|      59 | Cesar93               |      164 | https://roberta.net    |                32 |
+|      60 | Sam52                 |      168 | http://delpha.com      |                32 |
+|      63 | Elenor88              |      172 | https://julianne.org   |                32 |
+|      86 | Delfina_VonRueden68   |      218 | http://susie.info      |                32 |
+|      86 | Delfina_VonRueden68   |      219 | http://hollis.com      |                32 |
+|      88 | Clint27               |      229 | https://emilia.org     |                32 |
+|      88 | Clint27               |      237 | http://mekhi.name      |                32 |
+|      99 | Alek_Watsica          |      253 | http://ryleigh.info    |                32 |
+|       1 | Kenton_Kirlin         |        5 | https://jennings.biz   |                31 |
+|       2 | Andre_Purdy85         |        6 | https://quinn.biz      |                31 |
+|       2 | Andre_Purdy85         |        9 | https://branson.biz    |                31 |
+|       6 | Travon.Waters         |       18 | https://mac.org        |                31 |
+|       9 | Gus93                 |       27 | https://reece.net      |                31 |
+|      10 | Presley_McClure       |       31 | http://remington.name  |                31 |
+|      12 | Dereck65              |       38 | http://alena.net       |                31 |
+|      16 | Annalise.McKenzie16   |       54 | https://clair.com      |                31 |
+|      23 | Eveline95             |       73 | https://mafalda.org    |                31 |
+|      28 | Dario77               |       83 | http://paxton.com      |                31 |
+|      30 | Kaley9                |       93 | https://jensen.name    |                31 |
+|      33 | Yvette.Gottlieb91     |      104 | https://karina.biz     |                31 |
+|      43 | Janet.Armstrong       |      115 | http://euna.info       |                31 |
+|      58 | Aurelie71             |      156 | http://victoria.biz    |                31 |
+|      59 | Cesar93               |      159 | http://jedediah.net    |                31 |
+|      59 | Cesar93               |      160 | http://sedrick.net     |                31 |
+|      60 | Sam52                 |      167 | http://blanca.org      |                31 |
+|      67 | Emilio_Bernier52      |      187 | http://germaine.name   |                31 |
+|      72 | Kathryn80             |      191 | http://ellen.info      |                31 |
+|      77 | Donald.Fritsch        |      202 | http://laney.name      |                31 |
+|      78 | Colten.Harris76       |      207 | http://ole.info        |                31 |
+|      87 | Rick29                |      224 | http://helena.name     |                31 |
+|      88 | Clint27               |      228 | https://noble.net      |                31 |
+|      92 | Frederik_Rice         |      239 | https://devan.com      |                31 |
+|      95 | Nicole71              |      246 | https://kathleen.biz   |                31 |
+|      97 | Tomas.Beatty93        |      250 | http://ayla.org        |                31 |
+|      99 | Alek_Watsica          |      254 | https://darien.name    |                31 |
+|       3 | Harley_Lind18         |       10 | https://elenor.name    |                30 |
+|       9 | Gus93                 |       26 | http://saige.com       |                30 |
+|      15 | Billy52               |       47 | http://dominic.biz     |                30 |
+|      47 | Harrison.Beatty50     |      132 | http://kailee.org      |                30 |
+|      52 | Zack_Kemmer93         |      143 | https://aimee.info     |                30 |
+|      64 | Florence99            |      179 | http://ora.net         |                30 |
+|      65 | Adelle96              |      184 | http://rico.biz        |                30 |
+|      67 | Emilio_Bernier52      |      188 | https://mariane.org    |                30 |
+|      72 | Kathryn80             |      193 | https://javonte.org    |                30 |
+|      86 | Delfina_VonRueden68   |      216 | http://deontae.org     |                30 |
+|      88 | Clint27               |      236 | http://cali.net        |                30 |
+|      92 | Frederik_Rice         |      240 | https://jarrett.name   |                30 |
+|       3 | Harley_Lind18         |       12 | http://felicity.name   |                29 |
+|      11 | Justina.Gaylord27     |       33 | https://alisha.com     |                29 |
+|      16 | Annalise.McKenzie16   |       51 | https://abagail.com    |                29 |
+|      29 | Jaime53               |       92 | http://lacy.biz        |                29 |
+|      38 | Jordyn.Jacobson2      |      108 | http://boris.biz       |                29 |
+|      47 | Harrison.Beatty50     |      129 | http://buddy.com       |                29 |
+|      47 | Harrison.Beatty50     |      130 | http://americo.biz     |                29 |
+|      47 | Harrison.Beatty50     |      131 | http://lurline.info    |                29 |
+|      50 | Gerard79              |      135 | http://rosetta.net     |                29 |
+|      59 | Cesar93               |      165 | https://estell.info    |                29 |
+|      72 | Kathryn80             |      194 | http://florine.org     |                29 |
+|      79 | Katarina.Dibbert      |      208 | https://ford.biz       |                29 |
+|      85 | Milford_Gleichner42   |      214 | https://ruthie.info    |                29 |
+|      86 | Delfina_VonRueden68   |      215 | https://evan.name      |                29 |
+|       8 | Tabitha_Schamberger11 |       22 | https://brooklyn.name  |                28 |
+|      31 | Aiyana_Hoeger         |       95 | https://ariel.net      |                28 |
+|      63 | Elenor88              |      175 | https://norval.com     |                28 |
+|      96 | Keenan.Schamberger60  |      247 | https://helmer.org     |                28 |
+|      97 | Tomas.Beatty93        |      251 | https://elyssa.biz     |                28 |
+|       2 | Andre_Purdy85         |        8 | http://malvina.org     |                27 |
+|      15 | Billy52               |       50 | http://zena.com        |                27 |
+|      51 | Mariano_Koch3         |      139 | https://seamus.org     |                27 |
+|      88 | Clint27               |      238 | http://adela.com       |                27 |
+|      72 | Kathryn80             |      195 | http://marcellus.info  |                26 |
+|       1 | Kenton_Kirlin         |        1 | http://elijah.biz      |                25 |
+|      86 | Delfina_VonRueden68   |      223 | http://howard.net      |                25 |
++---------+-----------------------+----------+------------------------+-------------------+
+257 rows in set (0.02 sec)
+
+mysql> -- TO FIND OUT THE TOP 5 MOST COMMONLY USED HASTAGS.
+mysql> SHOW TABLES;
++------------------------------+
+| Tables_in_instagram_clone_db |
++------------------------------+
+| comments                     |
+| follows                      |
+| likes                        |
+| photo_tags                   |
+| photos                       |
+| tags                         |
+| users                        |
++------------------------------+
+7 rows in set (0.00 sec)
+
+mysql> SELECT TAGS.ID AS TAG_ID,
+    -> TAGS.TAG_NAME,
+    -> COUNT(*) AS TOTAL_TAGS_COUNT
+    -> FROM TAGS
+    -> JOIN PHOTO_TAGS
+    -> ON TAGS.ID = PHOTO_TAGS.TAG_ID
+    -> GROUP BY TAGS.ID
+    -> ORDER BY TOTAL_TAGS_COUNT DESC
+    -> LIMIT 5;
++--------+----------+------------------+
+| TAG_ID | TAG_NAME | TOTAL_TAGS_COUNT |
++--------+----------+------------------+
+|     21 | smile    |               59 |
+|     20 | beach    |               42 |
+|     17 | party    |               39 |
+|     13 | fun      |               38 |
+|     18 | concert  |               24 |
++--------+----------+------------------+
+5 rows in set (0.00 sec)
+
+mysql> -- FIND NO.OF USERS WHO HAVE LIKED EVERY SINGLE PHOTO ON THE SITE.
+mysql> SELECT * FROM PHOTOS;
++-----+------------------------+---------+---------------------+
+| id  | image_url              | user_id | created_at          |
++-----+------------------------+---------+---------------------+
+|   1 | http://elijah.biz      |       1 | 2026-07-11 10:45:03 |
+|   2 | https://shanon.org     |       1 | 2026-07-11 10:45:03 |
+|   3 | http://vicky.biz       |       1 | 2026-07-11 10:45:03 |
+|   4 | http://oleta.net       |       1 | 2026-07-11 10:45:03 |
+|   5 | https://jennings.biz   |       1 | 2026-07-11 10:45:03 |
+|   6 | https://quinn.biz      |       2 | 2026-07-11 10:45:03 |
+|   7 | https://selina.name    |       2 | 2026-07-11 10:45:03 |
+|   8 | http://malvina.org     |       2 | 2026-07-11 10:45:03 |
+|   9 | https://branson.biz    |       2 | 2026-07-11 10:45:03 |
+|  10 | https://elenor.name    |       3 | 2026-07-11 10:45:03 |
+|  11 | https://marcelino.com  |       3 | 2026-07-11 10:45:03 |
+|  12 | http://felicity.name   |       3 | 2026-07-11 10:45:03 |
+|  13 | https://fred.com       |       3 | 2026-07-11 10:45:03 |
+|  14 | https://gerhard.biz    |       4 | 2026-07-11 10:45:03 |
+|  15 | https://sherwood.net   |       4 | 2026-07-11 10:45:03 |
+|  16 | https://maudie.org     |       4 | 2026-07-11 10:45:03 |
+|  17 | http://annamae.name    |       6 | 2026-07-11 10:45:03 |
+|  18 | https://mac.org        |       6 | 2026-07-11 10:45:03 |
+|  19 | http://miracle.info    |       6 | 2026-07-11 10:45:03 |
+|  20 | http://emmet.com       |       6 | 2026-07-11 10:45:03 |
+|  21 | https://lisa.com       |       6 | 2026-07-11 10:45:03 |
+|  22 | https://brooklyn.name  |       8 | 2026-07-11 10:45:03 |
+|  23 | http://madison.net     |       8 | 2026-07-11 10:45:03 |
+|  24 | http://annie.name      |       8 | 2026-07-11 10:45:03 |
+|  25 | http://darron.info     |       8 | 2026-07-11 10:45:03 |
+|  26 | http://saige.com       |       9 | 2026-07-11 10:45:03 |
+|  27 | https://reece.net      |       9 | 2026-07-11 10:45:03 |
+|  28 | http://vance.org       |       9 | 2026-07-11 10:45:03 |
+|  29 | http://ignacio.net     |       9 | 2026-07-11 10:45:03 |
+|  30 | http://kenny.com       |      10 | 2026-07-11 10:45:03 |
+|  31 | http://remington.name  |      10 | 2026-07-11 10:45:03 |
+|  32 | http://kurtis.info     |      10 | 2026-07-11 10:45:03 |
+|  33 | https://alisha.com     |      11 | 2026-07-11 10:45:03 |
+|  34 | https://henderson.com  |      11 | 2026-07-11 10:45:03 |
+|  35 | http://bonnie.info     |      11 | 2026-07-11 10:45:03 |
+|  36 | http://kennith.net     |      11 | 2026-07-11 10:45:03 |
+|  37 | http://camille.name    |      11 | 2026-07-11 10:45:03 |
+|  38 | http://alena.net       |      12 | 2026-07-11 10:45:03 |
+|  39 | http://ralph.name      |      12 | 2026-07-11 10:45:03 |
+|  40 | https://tyshawn.com    |      12 | 2026-07-11 10:45:03 |
+|  41 | https://adella.net     |      12 | 2026-07-11 10:45:03 |
+|  42 | https://cielo.info     |      13 | 2026-07-11 10:45:03 |
+|  43 | https://easter.net     |      13 | 2026-07-11 10:45:03 |
+|  44 | http://golden.org      |      13 | 2026-07-11 10:45:03 |
+|  45 | http://kendall.biz     |      13 | 2026-07-11 10:45:03 |
+|  46 | https://glenda.info    |      13 | 2026-07-11 10:45:03 |
+|  47 | http://dominic.biz     |      15 | 2026-07-11 10:45:03 |
+|  48 | http://tressie.info    |      15 | 2026-07-11 10:45:03 |
+|  49 | http://estevan.org     |      15 | 2026-07-11 10:45:03 |
+|  50 | http://zena.com        |      15 | 2026-07-11 10:45:03 |
+|  51 | https://abagail.com    |      16 | 2026-07-11 10:45:03 |
+|  52 | https://hershel.com    |      16 | 2026-07-11 10:45:03 |
+|  53 | http://collin.com      |      16 | 2026-07-11 10:45:03 |
+|  54 | https://clair.com      |      16 | 2026-07-11 10:45:03 |
+|  55 | https://deondre.com    |      17 | 2026-07-11 10:45:03 |
+|  56 | http://tristin.name    |      17 | 2026-07-11 10:45:03 |
+|  57 | http://kirk.org        |      17 | 2026-07-11 10:45:03 |
+|  58 | https://modesta.info   |      18 | 2026-07-11 10:45:03 |
+|  59 | http://rylan.biz       |      19 | 2026-07-11 10:45:03 |
+|  60 | https://noemie.com     |      19 | 2026-07-11 10:45:03 |
+|  61 | https://dejon.name     |      20 | 2026-07-11 10:45:03 |
+|  62 | https://rigoberto.net  |      22 | 2026-07-11 10:45:03 |
+|  63 | http://megane.biz      |      23 | 2026-07-11 10:45:03 |
+|  64 | http://emmalee.org     |      23 | 2026-07-11 10:45:03 |
+|  65 | http://nathan.net      |      23 | 2026-07-11 10:45:03 |
+|  66 | http://lionel.net      |      23 | 2026-07-11 10:45:03 |
+|  67 | http://danyka.net      |      23 | 2026-07-11 10:45:03 |
+|  68 | https://woodrow.com    |      23 | 2026-07-11 10:45:03 |
+|  69 | http://harvey.info     |      23 | 2026-07-11 10:45:03 |
+|  70 | http://aiden.org       |      23 | 2026-07-11 10:45:03 |
+|  71 | https://tito.name      |      23 | 2026-07-11 10:45:03 |
+|  72 | https://julian.net     |      23 | 2026-07-11 10:45:03 |
+|  73 | https://mafalda.org    |      23 | 2026-07-11 10:45:03 |
+|  74 | http://verner.org      |      23 | 2026-07-11 10:45:03 |
+|  75 | https://elmore.org     |      26 | 2026-07-11 10:45:03 |
+|  76 | http://kasandra.com    |      26 | 2026-07-11 10:45:03 |
+|  77 | https://jarret.info    |      26 | 2026-07-11 10:45:03 |
+|  78 | http://einar.net       |      26 | 2026-07-11 10:45:03 |
+|  79 | http://terry.info      |      26 | 2026-07-11 10:45:03 |
+|  80 | https://holden.com     |      27 | 2026-07-11 10:45:03 |
+|  81 | https://jacinto.org    |      28 | 2026-07-11 10:45:03 |
+|  82 | https://geoffrey.info  |      28 | 2026-07-11 10:45:03 |
+|  83 | http://paxton.com      |      28 | 2026-07-11 10:45:03 |
+|  84 | https://trinity.biz    |      28 | 2026-07-11 10:45:03 |
+|  85 | http://fabiola.org     |      29 | 2026-07-11 10:45:03 |
+|  86 | https://bryce.org      |      29 | 2026-07-11 10:45:03 |
+|  87 | http://emery.net       |      29 | 2026-07-11 10:45:03 |
+|  88 | https://marian.biz     |      29 | 2026-07-11 10:45:03 |
+|  89 | https://kennedi.org    |      29 | 2026-07-11 10:45:03 |
+|  90 | https://fanny.net      |      29 | 2026-07-11 10:45:03 |
+|  91 | http://lottie.net      |      29 | 2026-07-11 10:45:03 |
+|  92 | http://lacy.biz        |      29 | 2026-07-11 10:45:03 |
+|  93 | https://jensen.name    |      30 | 2026-07-11 10:45:03 |
+|  94 | http://virginia.org    |      30 | 2026-07-11 10:45:03 |
+|  95 | https://ariel.net      |      31 | 2026-07-11 10:45:03 |
+|  96 | http://roger.info      |      32 | 2026-07-11 10:45:03 |
+|  97 | https://carolanne.com  |      32 | 2026-07-11 10:45:03 |
+|  98 | https://margarita.info |      32 | 2026-07-11 10:45:03 |
+|  99 | https://kayden.biz     |      32 | 2026-07-11 10:45:03 |
+| 100 | https://brook.com      |      33 | 2026-07-11 10:45:03 |
+| 101 | https://gust.net       |      33 | 2026-07-11 10:45:03 |
+| 102 | http://bridie.name     |      33 | 2026-07-11 10:45:03 |
+| 103 | http://barton.name     |      33 | 2026-07-11 10:45:03 |
+| 104 | https://karina.biz     |      33 | 2026-07-11 10:45:03 |
+| 105 | https://mariam.com     |      35 | 2026-07-11 10:45:03 |
+| 106 | https://trycia.com     |      35 | 2026-07-11 10:45:03 |
+| 107 | https://everette.biz   |      37 | 2026-07-11 10:45:03 |
+| 108 | http://boris.biz       |      38 | 2026-07-11 10:45:03 |
+| 109 | http://arthur.name     |      38 | 2026-07-11 10:45:03 |
+| 110 | https://cesar.com      |      39 | 2026-07-11 10:45:03 |
+| 111 | http://charlie.com     |      40 | 2026-07-11 10:45:03 |
+| 112 | https://lina.biz       |      42 | 2026-07-11 10:45:03 |
+| 113 | https://darwin.net     |      42 | 2026-07-11 10:45:03 |
+| 114 | https://aliyah.biz     |      42 | 2026-07-11 10:45:03 |
+| 115 | http://euna.info       |      43 | 2026-07-11 10:45:03 |
+| 116 | https://maymie.net     |      43 | 2026-07-11 10:45:03 |
+| 117 | http://joanie.name     |      43 | 2026-07-11 10:45:03 |
+| 118 | http://whitney.net     |      43 | 2026-07-11 10:45:03 |
+| 119 | http://garrison.name   |      43 | 2026-07-11 10:45:03 |
+| 120 | https://olga.org       |      44 | 2026-07-11 10:45:03 |
+| 121 | https://donavon.org    |      44 | 2026-07-11 10:45:03 |
+| 122 | http://moses.biz       |      44 | 2026-07-11 10:45:03 |
+| 123 | http://shannon.org     |      44 | 2026-07-11 10:45:03 |
+| 124 | http://kendrick.net    |      46 | 2026-07-11 10:45:03 |
+| 125 | https://carey.com      |      46 | 2026-07-11 10:45:03 |
+| 126 | http://lia.biz         |      46 | 2026-07-11 10:45:03 |
+| 127 | https://celestine.name |      46 | 2026-07-11 10:45:03 |
+| 128 | http://laila.info      |      47 | 2026-07-11 10:45:03 |
+| 129 | http://buddy.com       |      47 | 2026-07-11 10:45:03 |
+| 130 | http://americo.biz     |      47 | 2026-07-11 10:45:03 |
+| 131 | http://lurline.info    |      47 | 2026-07-11 10:45:03 |
+| 132 | http://kailee.org      |      47 | 2026-07-11 10:45:03 |
+| 133 | https://edyth.com      |      48 | 2026-07-11 10:45:03 |
+| 134 | https://isaias.biz     |      50 | 2026-07-11 10:45:03 |
+| 135 | http://rosetta.net     |      50 | 2026-07-11 10:45:03 |
+| 136 | https://marianna.info  |      50 | 2026-07-11 10:45:03 |
+| 137 | https://roel.org       |      51 | 2026-07-11 10:45:03 |
+| 138 | http://julia.info      |      51 | 2026-07-11 10:45:03 |
+| 139 | https://seamus.org     |      51 | 2026-07-11 10:45:03 |
+| 140 | https://earline.info   |      51 | 2026-07-11 10:45:03 |
+| 141 | http://quinten.info    |      51 | 2026-07-11 10:45:03 |
+| 142 | https://dolores.org    |      52 | 2026-07-11 10:45:03 |
+| 143 | https://aimee.info     |      52 | 2026-07-11 10:45:03 |
+| 144 | https://roderick.name  |      52 | 2026-07-11 10:45:03 |
+| 145 | https://jarret.name    |      52 | 2026-07-11 10:45:03 |
+| 146 | https://cathrine.com   |      52 | 2026-07-11 10:45:03 |
+| 147 | https://adela.com      |      55 | 2026-07-11 10:45:03 |
+| 148 | https://demarco.com    |      56 | 2026-07-11 10:45:03 |
+| 149 | https://lila.biz       |      58 | 2026-07-11 10:45:03 |
+| 150 | http://ruben.net       |      58 | 2026-07-11 10:45:03 |
+| 151 | https://alia.name      |      58 | 2026-07-11 10:45:03 |
+| 152 | http://rickey.name     |      58 | 2026-07-11 10:45:03 |
+| 153 | http://janie.com       |      58 | 2026-07-11 10:45:03 |
+| 154 | http://myron.org       |      58 | 2026-07-11 10:45:03 |
+| 155 | http://pearl.info      |      58 | 2026-07-11 10:45:03 |
+| 156 | http://victoria.biz    |      58 | 2026-07-11 10:45:03 |
+| 157 | https://carmella.com   |      59 | 2026-07-11 10:45:03 |
+| 158 | http://leo.com         |      59 | 2026-07-11 10:45:03 |
+| 159 | http://jedediah.net    |      59 | 2026-07-11 10:45:03 |
+| 160 | http://sedrick.net     |      59 | 2026-07-11 10:45:03 |
+| 161 | https://clare.org      |      59 | 2026-07-11 10:45:03 |
+| 162 | https://malcolm.name   |      59 | 2026-07-11 10:45:03 |
+| 163 | https://lesly.com      |      59 | 2026-07-11 10:45:03 |
+| 164 | https://roberta.net    |      59 | 2026-07-11 10:45:03 |
+| 165 | https://estell.info    |      59 | 2026-07-11 10:45:03 |
+| 166 | http://kaleigh.biz     |      59 | 2026-07-11 10:45:03 |
+| 167 | http://blanca.org      |      60 | 2026-07-11 10:45:03 |
+| 168 | http://delpha.com      |      60 | 2026-07-11 10:45:03 |
+| 169 | http://annabelle.org   |      61 | 2026-07-11 10:45:03 |
+| 170 | http://ephraim.com     |      62 | 2026-07-11 10:45:03 |
+| 171 | https://dameon.name    |      62 | 2026-07-11 10:45:03 |
+| 172 | https://julianne.org   |      63 | 2026-07-11 10:45:03 |
+| 173 | https://jasmin.biz     |      63 | 2026-07-11 10:45:03 |
+| 174 | https://delbert.net    |      63 | 2026-07-11 10:45:03 |
+| 175 | https://norval.com     |      63 | 2026-07-11 10:45:03 |
+| 176 | https://jessy.name     |      64 | 2026-07-11 10:45:03 |
+| 177 | https://nolan.name     |      64 | 2026-07-11 10:45:03 |
+| 178 | http://devon.info      |      64 | 2026-07-11 10:45:03 |
+| 179 | http://ora.net         |      64 | 2026-07-11 10:45:03 |
+| 180 | https://vivien.com     |      64 | 2026-07-11 10:45:03 |
+| 181 | https://hilda.info     |      65 | 2026-07-11 10:45:03 |
+| 182 | https://dorcas.biz     |      65 | 2026-07-11 10:45:03 |
+| 183 | http://hettie.net      |      65 | 2026-07-11 10:45:03 |
+| 184 | http://rico.biz        |      65 | 2026-07-11 10:45:03 |
+| 185 | http://jody.biz        |      65 | 2026-07-11 10:45:03 |
+| 186 | http://sheila.com      |      67 | 2026-07-11 10:45:03 |
+| 187 | http://germaine.name   |      67 | 2026-07-11 10:45:03 |
+| 188 | https://mariane.org    |      67 | 2026-07-11 10:45:03 |
+| 189 | http://reva.com        |      69 | 2026-07-11 10:45:03 |
+| 190 | https://llewellyn.info |      70 | 2026-07-11 10:45:03 |
+| 191 | http://ellen.info      |      72 | 2026-07-11 10:45:03 |
+| 192 | https://anahi.info     |      72 | 2026-07-11 10:45:03 |
+| 193 | https://javonte.org    |      72 | 2026-07-11 10:45:03 |
+| 194 | http://florine.org     |      72 | 2026-07-11 10:45:03 |
+| 195 | http://marcellus.info  |      72 | 2026-07-11 10:45:03 |
+| 196 | http://stan.biz        |      73 | 2026-07-11 10:45:03 |
+| 197 | http://jarred.net      |      77 | 2026-07-11 10:45:03 |
+| 198 | http://jovanny.net     |      77 | 2026-07-11 10:45:03 |
+| 199 | http://linnie.com      |      77 | 2026-07-11 10:45:03 |
+| 200 | http://dino.name       |      77 | 2026-07-11 10:45:03 |
+| 201 | https://jane.net       |      77 | 2026-07-11 10:45:03 |
+| 202 | http://laney.name      |      77 | 2026-07-11 10:45:03 |
+| 203 | http://trever.org      |      78 | 2026-07-11 10:45:03 |
+| 204 | http://emilie.net      |      78 | 2026-07-11 10:45:03 |
+| 205 | http://ted.info        |      78 | 2026-07-11 10:45:03 |
+| 206 | http://keshawn.org     |      78 | 2026-07-11 10:45:03 |
+| 207 | http://ole.info        |      78 | 2026-07-11 10:45:03 |
+| 208 | https://ford.biz       |      79 | 2026-07-11 10:45:03 |
+| 209 | https://humberto.org   |      82 | 2026-07-11 10:45:03 |
+| 210 | http://penelope.info   |      82 | 2026-07-11 10:45:03 |
+| 211 | https://dimitri.info   |      84 | 2026-07-11 10:45:03 |
+| 212 | http://cynthia.info    |      84 | 2026-07-11 10:45:03 |
+| 213 | http://princess.org    |      85 | 2026-07-11 10:45:03 |
+| 214 | https://ruthie.info    |      85 | 2026-07-11 10:45:03 |
+| 215 | https://evan.name      |      86 | 2026-07-11 10:45:03 |
+| 216 | http://deontae.org     |      86 | 2026-07-11 10:45:03 |
+| 217 | https://timmy.info     |      86 | 2026-07-11 10:45:03 |
+| 218 | http://susie.info      |      86 | 2026-07-11 10:45:03 |
+| 219 | http://hollis.com      |      86 | 2026-07-11 10:45:03 |
+| 220 | https://colt.org       |      86 | 2026-07-11 10:45:03 |
+| 221 | http://lucio.org       |      86 | 2026-07-11 10:45:03 |
+| 222 | http://germaine.org    |      86 | 2026-07-11 10:45:03 |
+| 223 | http://howard.net      |      86 | 2026-07-11 10:45:03 |
+| 224 | http://helena.name     |      87 | 2026-07-11 10:45:03 |
+| 225 | https://celestino.name |      87 | 2026-07-11 10:45:03 |
+| 226 | http://violet.info     |      87 | 2026-07-11 10:45:03 |
+| 227 | http://nigel.biz       |      87 | 2026-07-11 10:45:03 |
+| 228 | https://noble.net      |      88 | 2026-07-11 10:45:03 |
+| 229 | https://emilia.org     |      88 | 2026-07-11 10:45:03 |
+| 230 | http://destini.net     |      88 | 2026-07-11 10:45:03 |
+| 231 | https://mariano.net    |      88 | 2026-07-11 10:45:03 |
+| 232 | https://brittany.org   |      88 | 2026-07-11 10:45:03 |
+| 233 | https://madaline.name  |      88 | 2026-07-11 10:45:03 |
+| 234 | https://devonte.name   |      88 | 2026-07-11 10:45:03 |
+| 235 | https://blanche.net    |      88 | 2026-07-11 10:45:03 |
+| 236 | http://cali.net        |      88 | 2026-07-11 10:45:03 |
+| 237 | http://mekhi.name      |      88 | 2026-07-11 10:45:03 |
+| 238 | http://adela.com       |      88 | 2026-07-11 10:45:03 |
+| 239 | https://devan.com      |      92 | 2026-07-11 10:45:03 |
+| 240 | https://jarrett.name   |      92 | 2026-07-11 10:45:03 |
+| 241 | https://sid.biz        |      92 | 2026-07-11 10:45:03 |
+| 242 | https://jadyn.name     |      93 | 2026-07-11 10:45:03 |
+| 243 | https://erik.com       |      93 | 2026-07-11 10:45:03 |
+| 244 | http://freeda.biz      |      94 | 2026-07-11 10:45:03 |
+| 245 | http://ayden.name      |      95 | 2026-07-11 10:45:03 |
+| 246 | https://kathleen.biz   |      95 | 2026-07-11 10:45:03 |
+| 247 | https://helmer.org     |      96 | 2026-07-11 10:45:03 |
+| 248 | https://maggie.info    |      96 | 2026-07-11 10:45:03 |
+| 249 | https://cecilia.net    |      96 | 2026-07-11 10:45:03 |
+| 250 | http://ayla.org        |      97 | 2026-07-11 10:45:03 |
+| 251 | https://elyssa.biz     |      97 | 2026-07-11 10:45:03 |
+| 252 | http://jennie.com      |      98 | 2026-07-11 10:45:03 |
+| 253 | http://ryleigh.info    |      99 | 2026-07-11 10:45:03 |
+| 254 | https://darien.name    |      99 | 2026-07-11 10:45:03 |
+| 255 | https://xzavier.org    |      99 | 2026-07-11 10:45:03 |
+| 256 | https://kaela.name     |     100 | 2026-07-11 10:45:03 |
+| 257 | http://dedrick.info    |     100 | 2026-07-11 10:45:03 |
++-----+------------------------+---------+---------------------+
+257 rows in set (0.00 sec)
+
+mysql> SELECT USERS.ID AS USER_ID,
+    -> USERS.USERNAME,
+    -> COUNT(*) AS TOTAL_USER_LIKES
+    -> FROM USERS
+    -> JOIN LIKES
+    -> ON USERS.ID = LIKES.USER_ID
+    -> GROUP BY USERS.ID
+    -> HAVING TOTAL_USER_LIKES = (SELECT COUNT(*) FROM PHOTOS);
++---------+--------------------+------------------+
+| USER_ID | USERNAME           | TOTAL_USER_LIKES |
++---------+--------------------+------------------+
+|       5 | Aniya_Hackett      |              257 |
+|      14 | Jaclyn81           |              257 |
+|      21 | Rocio33            |              257 |
+|      24 | Maxwell.Halvorson  |              257 |
+|      36 | Ollie_Ledner37     |              257 |
+|      41 | Mckenna17          |              257 |
+|      54 | Duane60            |              257 |
+|      57 | Julien_Schmidt     |              257 |
+|      66 | Mike.Auer39        |              257 |
+|      71 | Nia_Haag           |              257 |
+|      75 | Leslie67           |              257 |
+|      76 | Janelle.Nikolaus81 |              257 |
+|      91 | Bethany20          |              257 |
++---------+--------------------+------------------+
+13 rows in set (0.01 sec)
+
+mysql> 
+mysql> 
+mysql> CREATE DATABASE IF NOT EXISTS jeevan_raksha_pharmacy;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> 
+mysql> USE jeevan_raksha_pharmacy;
+Database changed
+mysql> CREATE TABLE customers (
+    ->     customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     name VARCHAR(100),
+    ->     phone VARCHAR(15),
+    ->     city VARCHAR(50)
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> CREATE TABLE suppliers (
+    ->     supplier_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     supplier_name VARCHAR(100),
+    ->     contact_person VARCHAR(100),
+    ->     phone VARCHAR(15)
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> 
+mysql> CREATE TABLE medicines (
+    ->     medicine_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     name VARCHAR(100),
+    ->     category VARCHAR(50),
+    ->     price DECIMAL(10,2),
+    ->     stock_quantity INT,
+    ->     expiry_date DATE,
+    ->     supplier_id INT,
+    ->     FOREIGN KEY (supplier_id) REFERENCES suppliers(supplier_id)
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> 
+mysql> CREATE TABLE orders (
+    ->     order_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     customer_id INT,
+    ->     order_date DATE,
+    ->     total_amount DECIMAL(10,2),
+    ->     payment_mode ENUM('UPI', 'Cash', 'Card'),
+    ->     FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> 
+mysql> CREATE TABLE order_items (
+    ->     item_id INT AUTO_INCREMENT PRIMARY KEY,
+    ->     order_id INT,
+    ->     medicine_id INT,
+    ->     quantity INT,
+    ->     subtotal DECIMAL(10,2),
+    ->     FOREIGN KEY (order_id) REFERENCES orders(order_id),
+    ->     FOREIGN KEY (medicine_id) REFERENCES medicines(medicine_id)
+    -> );
+Query OK, 0 rows affected (0.09 sec)
+
+mysql> -- Customers
+mysql> INSERT INTO customers (name, phone, city) VALUES
+    -> ('Rahul Sharma', '9876543210', 'Mumbai'),
+    -> ('Priya Verma', '9123456789', 'Delhi'),
+    -> ('Amit Patel', '9988776655', 'Ahmedabad'),
+    -> ('Sneha Reddy', '8877665544', 'Hyderabad'),
+    -> ('Vikram Singh', '7766554433', 'Mumbai');
+Query OK, 5 rows affected (0.02 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> -- Suppliers
+mysql> INSERT INTO suppliers (supplier_name, contact_person, phone) VALUES
+    -> ('Apollo Distributors', 'Rajesh Gupta', '022-123456'),
+    -> ('MedPlus Supply Chain', 'Suresh Nair', '040-987654'),
+    -> ('Himalaya Wellness', 'Anjali Mehta', '011-456789');
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> -- Medicines
+mysql> INSERT INTO medicines 
+    -> (name, category, price, stock_quantity, expiry_date, supplier_id)
+    -> VALUES
+    -> ('Dolo 650', 'Tablet', 30.00, 500, '2025-12-31', 1),
+    -> ('Azithral 500', 'Tablet', 120.00, 50, '2024-05-20', 1),
+    -> ('Benadryl', 'Syrup', 110.00, 20, '2024-11-15', 2),
+    -> ('Combiflam', 'Tablet', 45.00, 200, '2026-01-01', 3),
+    -> ('Insulin Pen', 'Injection', 800.00, 5, '2024-03-10', 2);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> -- Orders
+mysql> INSERT INTO orders
+    -> (customer_id, order_date, total_amount, payment_mode)
+    -> VALUES
+    -> (1, '2023-10-01', 150.00, 'UPI'),
+    -> (2, '2023-10-02', 240.00, 'Card'),
+    -> (3, '2023-10-05', 45.00, 'Cash'),
+    -> (1, '2023-10-10', 800.00, 'UPI'),
+    -> (4, '2023-10-12', 1200.00, 'Card');
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> 
+mysql> -- Order Items
+mysql> INSERT INTO order_items
+    -> (order_id, medicine_id, quantity, subtotal)
+    -> VALUES
+    -> (1, 1, 5, 150.00),
+    -> (2, 2, 2, 240.00),
+    -> (3, 4, 1, 45.00),
+    -> (4, 5, 1, 800.00),
+    -> (5, 5, 1, 800.00),
+    -> (5, 2, 2, 240.00),
+    -> (5, 1, 5, 150.00);
+Query OK, 7 rows affected (0.01 sec)
+Records: 7  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM customers;
++-------------+--------------+------------+-----------+
+| customer_id | name         | phone      | city      |
++-------------+--------------+------------+-----------+
+|           1 | Rahul Sharma | 9876543210 | Mumbai    |
+|           2 | Priya Verma  | 9123456789 | Delhi     |
+|           3 | Amit Patel   | 9988776655 | Ahmedabad |
+|           4 | Sneha Reddy  | 8877665544 | Hyderabad |
+|           5 | Vikram Singh | 7766554433 | Mumbai    |
++-------------+--------------+------------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM suppliers;
++-------------+----------------------+----------------+------------+
+| supplier_id | supplier_name        | contact_person | phone      |
++-------------+----------------------+----------------+------------+
+|           1 | Apollo Distributors  | Rajesh Gupta   | 022-123456 |
+|           2 | MedPlus Supply Chain | Suresh Nair    | 040-987654 |
+|           3 | Himalaya Wellness    | Anjali Mehta   | 011-456789 |
++-------------+----------------------+----------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT * FROM medicines;
++-------------+--------------+-----------+--------+----------------+-------------+-------------+
+| medicine_id | name         | category  | price  | stock_quantity | expiry_date | supplier_id |
++-------------+--------------+-----------+--------+----------------+-------------+-------------+
+|           1 | Dolo 650     | Tablet    |  30.00 |            500 | 2025-12-31  |           1 |
+|           2 | Azithral 500 | Tablet    | 120.00 |             50 | 2024-05-20  |           1 |
+|           3 | Benadryl     | Syrup     | 110.00 |             20 | 2024-11-15  |           2 |
+|           4 | Combiflam    | Tablet    |  45.00 |            200 | 2026-01-01  |           3 |
+|           5 | Insulin Pen  | Injection | 800.00 |              5 | 2024-03-10  |           2 |
++-------------+--------------+-----------+--------+----------------+-------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM orders;
++----------+-------------+------------+--------------+--------------+
+| order_id | customer_id | order_date | total_amount | payment_mode |
++----------+-------------+------------+--------------+--------------+
+|        1 |           1 | 2023-10-01 |       150.00 | UPI          |
+|        2 |           2 | 2023-10-02 |       240.00 | Card         |
+|        3 |           3 | 2023-10-05 |        45.00 | Cash         |
+|        4 |           1 | 2023-10-10 |       800.00 | UPI          |
+|        5 |           4 | 2023-10-12 |      1200.00 | Card         |
++----------+-------------+------------+--------------+--------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM order_items;
++---------+----------+-------------+----------+----------+
+| item_id | order_id | medicine_id | quantity | subtotal |
++---------+----------+-------------+----------+----------+
+|       1 |        1 |           1 |        5 |   150.00 |
+|       2 |        2 |           2 |        2 |   240.00 |
+|       3 |        3 |           4 |        1 |    45.00 |
+|       4 |        4 |           5 |        1 |   800.00 |
+|       5 |        5 |           5 |        1 |   800.00 |
+|       6 |        5 |           2 |        2 |   240.00 |
+|       7 |        5 |           1 |        5 |   150.00 |
++---------+----------+-------------+----------+----------+
+7 rows in set (0.00 sec)
+
+mysql> -- 1.CUSTOMER LIST:RETRIEVE THE NAME AND CITY OF ALL CUSTOMERS.
+mysql> -- 2.STOCK CHECK:FIND THE NAMES OF MEDICINES THAT ARE 'SYRUP' OR 'INJECTION'.
+mysql> -- 3.HIGH VALUE BILLS:LIST ALL ORDERS WHERE THE TOTAL_AMOUNT IS GREATER THAN RS.500.
+mysql> -- 4.MUMBAI RESIDENTS: FIND THE PHONE NUMBERS OF ALL CUSTOMERS LIVING IN 'MUMBAI'.
+mysql> -- LEVER 2:INTERMEDIATE QUERIES (AGGREGATES & JOINS)
+mysql> -- 5.PAYMMENT ANALYSIS:HOW MANY ORDERS WERE PAID USING 'UPI'?
+mysql> -- 6.SUPPLIER COUNT:COUNT HOW MANY MEDICINES ARE SUPPLIED BY 'APOLLO DISTRIBUTORS' (USE SUBQUERY OR JOIN).
+mysql> -- 7.ORDER DETAILS:LIST THE CUSTOMER NAME,ORDER DATE, AND TOTAL AMOUNT FOR EVERY ORDER PLACED.
+mysql> -- 8.REVENUE BY MODE:CALCULATE THE TOTAL MONEY EARNED THROUGH EACH PAYMENT MODE (UPI,CARD,CASH).
+mysql> 
+mysql> SELECT NAME,CITY FROM CUSTOMERS;
++--------------+-----------+
+| NAME         | CITY      |
++--------------+-----------+
+| Rahul Sharma | Mumbai    |
+| Priya Verma  | Delhi     |
+| Amit Patel   | Ahmedabad |
+| Sneha Reddy  | Hyderabad |
+| Vikram Singh | Mumbai    |
++--------------+-----------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT NAME FROM MEDICINES WHERE CATEGORY IN ('SYRUP','INJECTION');
++-------------+
+| NAME        |
++-------------+
+| Benadryl    |
+| Insulin Pen |
++-------------+
+2 rows in set (0.01 sec)
+
+mysql> SELECT * FROM ORDERS WHERE TOTAL_AMOUNT > 500;
++----------+-------------+------------+--------------+--------------+
+| order_id | customer_id | order_date | total_amount | payment_mode |
++----------+-------------+------------+--------------+--------------+
+|        4 |           1 | 2023-10-10 |       800.00 | UPI          |
+|        5 |           4 | 2023-10-12 |      1200.00 | Card         |
++----------+-------------+------------+--------------+--------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT PHONE FROM CUSTOMERS WHERE CITY = 'MUMBAI';
++------------+
+| PHONE      |
++------------+
+| 9876543210 |
+| 7766554433 |
++------------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT COUNT(*) AS TOTAL_UPI_ORDERS FROM ORDERS WHERE PAYMENT_MODE = 'UPI';
++------------------+
+| TOTAL_UPI_ORDERS |
++------------------+
+|                2 |
++------------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT COUNT(*) AS MEDICINE_COUNT
+    -> FROM MEDICINES M
+    -> JOIN SUPPLIERS S
+    -> ON M.SUPPLIER_ID = S.SUPPLIER_ID
+    -> WHERE S.SUPPLIER_NAME = 'APOLLO DISTRIBUTION';
++----------------+
+| MEDICINE_COUNT |
++----------------+
+|              0 |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT C.NAME,
+    -> O.ORDER_DATE,
+    -> O.TOTAL_AMOUNT
+    -> FROM CUSTOMERS C
+    -> JOIN ORDERS O
+    -> ON C.CUSTOMER_ID = O.CUSTOMER_ID;
++--------------+------------+--------------+
+| NAME         | ORDER_DATE | TOTAL_AMOUNT |
++--------------+------------+--------------+
+| Rahul Sharma | 2023-10-01 |       150.00 |
+| Rahul Sharma | 2023-10-10 |       800.00 |
+| Priya Verma  | 2023-10-02 |       240.00 |
+| Amit Patel   | 2023-10-05 |        45.00 |
+| Sneha Reddy  | 2023-10-12 |      1200.00 |
++--------------+------------+--------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT PAYMENT_MODE,
+    -> SUM(TOTAL_AMOUNT) AS TOTAL_REVENUE
+    -> FROM ORDERS
+    -> GROUP BY PAYMENT_MODE;
++--------------+---------------+
+| PAYMENT_MODE | TOTAL_REVENUE |
++--------------+---------------+
+| UPI          |        950.00 |
+| Card         |       1440.00 |
+| Cash         |         45.00 |
++--------------+---------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT COUNT(*) AS MEDICINE_COUNT
+    -> FROM MEDICINES M
+    -> JOIN SUPPLIERS S
+    -> ON M.SUPPLIER_ID = S.SUPPLIER_ID
+    -> WHERE S.SUPPLIER_NAME = 'APOLLO DISTRIBUTORS';
++----------------+
+| MEDICINE_COUNT |
++----------------+
+|              2 |
++----------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT * FROM ORDER_ITEMS;
++---------+----------+-------------+----------+----------+
+| item_id | order_id | medicine_id | quantity | subtotal |
++---------+----------+-------------+----------+----------+
+|       1 |        1 |           1 |        5 |   150.00 |
+|       2 |        2 |           2 |        2 |   240.00 |
+|       3 |        3 |           4 |        1 |    45.00 |
+|       4 |        4 |           5 |        1 |   800.00 |
+|       5 |        5 |           5 |        1 |   800.00 |
+|       6 |        5 |           2 |        2 |   240.00 |
+|       7 |        5 |           1 |        5 |   150.00 |
++---------+----------+-------------+----------+----------+
+7 rows in set (0.00 sec)
+
+mysql> -- 9.WHICH MEDICINE HAS BEEN SOLD THE MOST.
+mysql> SELECT M.NAME,
+    -> SUM(OI.QUANTITY) AS TOTAL_SOLD
+    -> FROM ORDER_ITEMS OI
+    -> JOIN MEDICINES M
+    -> ON OI.MEDICINE_ID = M.MEDICINE_ID 
+    -> GROUP BY M.NAME
+    -> ORDER BY TOTAL_SOLD DESC;
++--------------+------------+
+| NAME         | TOTAL_SOLD |
++--------------+------------+
+| Dolo 650     |         10 |
+| Azithral 500 |          4 |
+| Insulin Pen  |          2 |
+| Combiflam    |          1 |
++--------------+------------+
+4 rows in set (0.00 sec)
+
+mysql> -- 10.CUSTOMER WHO SPENDS MORE THAN RS.1000
+mysql> SELECT * FROM ORDERS;
++----------+-------------+------------+--------------+--------------+
+| order_id | customer_id | order_date | total_amount | payment_mode |
++----------+-------------+------------+--------------+--------------+
+|        1 |           1 | 2023-10-01 |       150.00 | UPI          |
+|        2 |           2 | 2023-10-02 |       240.00 | Card         |
+|        3 |           3 | 2023-10-05 |        45.00 | Cash         |
+|        4 |           1 | 2023-10-10 |       800.00 | UPI          |
+|        5 |           4 | 2023-10-12 |      1200.00 | Card         |
++----------+-------------+------------+--------------+--------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT C.NAME,
+    -> SUM(TOTAL_AMOUNT) AS TOTAL_SPENT
+    -> FROM CUSTOMERS C
+    -> JOIN ORDERS O
+    -> ON C.CUSTOMER_ID = O.CUSTOMER_ID 
+    -> GROUP BY C.CUSTOMER_ID,C.NAME
+    -> HAVING TOTAL_SPENT > 1000;
++-------------+-------------+
+| NAME        | TOTAL_SPENT |
++-------------+-------------+
+| Sneha Reddy |     1200.00 |
++-------------+-------------+
+1 row in set (0.00 sec)
+
+mysql> -- 11.INVENTORY AUDIT: LIST THE MEDICINE_NAME,STOCK_QUANTITY AND SUPPLIER_NAME FOR MEDICINES THAT HAVE LESS THAN 50 UNITS LEFT IN STOCK.
+mysql> SELECT * FROM MEDICINES;
++-------------+--------------+-----------+--------+----------------+-------------+-------------+
+| medicine_id | name         | category  | price  | stock_quantity | expiry_date | supplier_id |
++-------------+--------------+-----------+--------+----------------+-------------+-------------+
+|           1 | Dolo 650     | Tablet    |  30.00 |            500 | 2025-12-31  |           1 |
+|           2 | Azithral 500 | Tablet    | 120.00 |             50 | 2024-05-20  |           1 |
+|           3 | Benadryl     | Syrup     | 110.00 |             20 | 2024-11-15  |           2 |
+|           4 | Combiflam    | Tablet    |  45.00 |            200 | 2026-01-01  |           3 |
+|           5 | Insulin Pen  | Injection | 800.00 |              5 | 2024-03-10  |           2 |
++-------------+--------------+-----------+--------+----------------+-------------+-------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM SUPPLIERS;
++-------------+----------------------+----------------+------------+
+| supplier_id | supplier_name        | contact_person | phone      |
++-------------+----------------------+----------------+------------+
+|           1 | Apollo Distributors  | Rajesh Gupta   | 022-123456 |
+|           2 | MedPlus Supply Chain | Suresh Nair    | 040-987654 |
+|           3 | Himalaya Wellness    | Anjali Mehta   | 011-456789 |
++-------------+----------------------+----------------+------------+
+3 rows in set (0.01 sec)
+
+mysql> SELECT M.NAME,M.STOCK_QUANTITY,S.SUPPLIER_NAME
+    -> FROM MEDICINES M
+    -> JOIN SUPPLIERS S 
+    -> ON M.SUPPLIER_ID = S.SUPPLIER_ID
+    -> WHERE M.STOCK_QUANTITY < 50;
++-------------+----------------+----------------------+
+| NAME        | STOCK_QUANTITY | SUPPLIER_NAME        |
++-------------+----------------+----------------------+
+| Benadryl    |             20 | MedPlus Supply Chain |
+| Insulin Pen |              5 | MedPlus Supply Chain |
++-------------+----------------+----------------------+
+2 rows in set (0.01 sec)
+
+mysql> SELECT M.NAME,M.STOCK_QUANTITY,S.SUPPLIER_NAME
+    -> FROM MEDICINES M
+    -> JOIN SUPPLIERS S 
+    -> ON M.SUPPLIER_ID = S.SUPPLIER_ID
+    -> WHERE M.STOCK_QUANTITY <= 50;
++--------------+----------------+----------------------+
+| NAME         | STOCK_QUANTITY | SUPPLIER_NAME        |
++--------------+----------------+----------------------+
+| Azithral 500 |             50 | Apollo Distributors  |
+| Benadryl     |             20 | MedPlus Supply Chain |
+| Insulin Pen  |              5 | MedPlus Supply Chain |
++--------------+----------------+----------------------+
+3 rows in set (0.00 sec)
+
+mysql> NOTEE
