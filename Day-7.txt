@@ -1,0 +1,537 @@
+Constraints
+------------
+Constraints are rules applied to a table columns in MySQL to ensure that only valid and acurate data is stored in the database.
+
+
+Why do we use Constraints ?
+----------------------------
+1. Maintain Data Integrity
+2. To prevent invalid data entry
+3. Avoid duplicate records
+4. Ensures relations between tables
+5. Make the database reliable and constraint.
+
+Types of Constraints
+---------------------
+1. Not Null 
+2. Unique key : It doesn't alow duplicate values
+3. Primary Key : It is the combination of unique + Not Null
+4. Composite key
+5. Foreign key
+6. Check constraint
+7. Default constraint
+
+Foreign Key Constraint
+-----------------------
+1) A foreign key is a key used to link two tables together.
+2) A foreign key is a field or (collection of fields) in one table that refers to the primary key in another table.
+3) The table containing the Foreign key is called child table and the table containing the candidate key is called referenced table or parent table.
+
+What are referential Actions
+-----------------------------
+1) Referential actions define what happens to child table data when parent table data is updated or deleted.
+2) They are used with foreign key constraints;
+
+1. On Delete Cascade :- When a parent table row is deleted, all matching child rows are automatically deleted.
+2. On Update Cascade :- When a parent key is updated, all matching child foreign key are updated automatically.
+
+mysql> use pfs3;
+Database changed
+mysql> desc students;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| STDID  | int         | YES  |     | NULL    |       |
+| NAME   | varchar(30) | YES  |     | NULL    |       |
+| MOBILE | varchar(12) | YES  |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+3 rows in set (0.05 sec)
+
+mysql> INSERT INTO STUDENTS(NAME,MOBILE) VALUES('HARI','1234567895');
+Query OK, 1 row affected (0.02 sec)
+
+mysql> SELECT * FROM STUDENTS;
++-------+------------+------------+
+| STDID | NAME       | MOBILE     |
++-------+------------+------------+
+|   111 | MALLI      | 1234567891 |
+|   222 | ARUN KUMAR | 1234567892 |
+|  NULL | HARI       | 1234567895 |
++-------+------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> CREATE TABLE STUDENT1(
+    -> SNO INT NOT NULL,
+    -> NAME VARCHAR(30),
+    -> MARKS INT
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> DESC STUDENT1;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| SNO   | int         | NO   |     | NULL    |       |
+| NAME  | varchar(30) | YES  |     | NULL    |       |
+| MARKS | int         | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> INSERT INTO STUDENT1 VALUES(111,'MALLI',96),(111,'MAHI',97);
+Query OK, 2 rows affected (0.01 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM STUDENTS;
++-------+------------+------------+
+| STDID | NAME       | MOBILE     |
++-------+------------+------------+
+|   111 | MALLI      | 1234567891 |
+|   222 | ARUN KUMAR | 1234567892 |
+|  NULL | HARI       | 1234567895 |
++-------+------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> CREATE TABLE STUDENT2(
+    -> SNO INT NULL,
+    -> NAME VARCHAR(30),
+    -> MARKS INT
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> DESC STUDENT2;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| SNO   | int         | YES  |     | NULL    |       |
+| NAME  | varchar(30) | YES  |     | NULL    |       |
+| MARKS | int         | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> INSERT INTO STUDENT2 VALUES(111,'MALLI',96),(111,'MAHI',97);
+Query OK, 2 rows affected (0.65 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM STUDENT2;
++------+-------+-------+
+| SNO  | NAME  | MARKS |
++------+-------+-------+
+|  111 | MALLI |    96 |
+|  111 | MAHI  |    97 |
++------+-------+-------+
+2 rows in set (0.00 sec)
+
+mysql> INSERT INTO STUDENT2 (NAME,MARKS) VALUES('ARUN',67);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> SELECT * FROM STUDENT2;
++------+-------+-------+
+| SNO  | NAME  | MARKS |
++------+-------+-------+
+|  111 | MALLI |    96 |
+|  111 | MAHI  |    97 |
+| NULL | ARUN  |    67 |
++------+-------+-------+
+3 rows in set (0.00 sec)
+
+mysql> CREATE TABLE STUDENT3(
+    -> SNO INT,
+    -> SNAME VARCHAR(30),
+    -> SMARKS INT,
+    -> PRIMARY KEY(SNO)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> DESC STUDENT3;
++--------+-------------+------+-----+---------+-------+
+| Field  | Type        | Null | Key | Default | Extra |
++--------+-------------+------+-----+---------+-------+
+| SNO    | int         | NO   | PRI | NULL    |       |
+| SNAME  | varchar(30) | YES  |     | NULL    |       |
+| SMARKS | int         | YES  |     | NULL    |       |
++--------+-------------+------+-----+---------+-------+
+3 rows in set (0.00 sec)
+
+mysql> INSERT INTO STUDENT3 VALUES(111,'SUNNY',97);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM STUDENT3;
++-----+-------+--------+
+| SNO | SNAME | SMARKS |
++-----+-------+--------+
+| 111 | SUNNY |     97 |
++-----+-------+--------+
+1 row in set (0.00 sec)
+
+mysql> INSERT INTO STUDENT3 VALUES(222,'BUNNY',87);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM STUDENT3;
++-----+-------+--------+
+| SNO | SNAME | SMARKS |
++-----+-------+--------+
+| 111 | SUNNY |     97 |
+| 222 | BUNNY |     87 |
++-----+-------+--------+
+2 rows in set (0.00 sec)
+
+mysql> INSERT INTO STUDENT3 VALUES(222,'VINAY',76);
+ERROR 1062 (23000): Duplicate entry '222' for key 'student3.PRIMARY'
+mysql> 
+mysql> CREATE TABLE STUDENT4(
+    -> SNO INT PRIMARY KEY,
+    -> SNAME VARCHAR(30) PRIMARY KEY,
+    -> SMARKS INT
+    -> );
+ERROR 1068 (42000): Multiple primary key defined
+mysql> 
+mysql> CREATE TABLE STUDENT4(
+    -> SNO INT,
+    -> SNAME VARCHAR(30),
+    -> SMARKS INT,
+    -> PRIMARY KEY(SNO,SNAME)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> INSERT INTO STUDENT4 VALUES(111,'SUNNY',40);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO STUDENT4 VALUES(222,'BUNNY',60);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM STUDENT4;
++-----+-------+--------+
+| SNO | SNAME | SMARKS |
++-----+-------+--------+
+| 111 | SUNNY |     40 |
+| 222 | BUNNY |     60 |
++-----+-------+--------+
+2 rows in set (0.00 sec)
+
+mysql> INSERT INTO STUDENT4(SNAME,SMARKS) VALUES('CHINNI',80);
+ERROR 1364 (HY000): Field 'SNO' doesn't have a default value
+
+mysql> INSERT INTO STUDENT4 VALUES(111,'BUNNY',50);
+Query OK, 1 row affected (0.02 sec)
+
+mysql> SELECT * FROM STUDENT4;
++-----+-------+--------+
+| SNO | SNAME | SMARKS |
++-----+-------+--------+
+| 111 | BUNNY |     50 |
+| 111 | SUNNY |     40 |
+| 222 | BUNNY |     60 |
++-----+-------+--------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT * FROM STUDENT5;
+ERROR 1146 (42S02): Table 'pfs3.student5' doesn't exist
+mysql> CREATE TABLE STUDENT5(
+    -> SNO INT,
+    -> SNAME VARCHAR(20),
+    -> MARKS INT
+    -> );
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> DESC STUDENT5;
++-------+-------------+------+-----+---------+-------+
+| Field | Type        | Null | Key | Default | Extra |
++-------+-------------+------+-----+---------+-------+
+| SNO   | int         | YES  |     | NULL    |       |
+| SNAME | varchar(20) | YES  |     | NULL    |       |
+| MARKS | int         | YES  |     | NULL    |       |
++-------+-------------+------+-----+---------+-------+
+3 rows in set (0.01 sec)
+
+mysql> INSERT INTO STUDENT5 VALUES(111,'ARJUN',70);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM STUDENTS;
++-------+------------+------------+
+| STDID | NAME       | MOBILE     |
++-------+------------+------------+
+|   111 | MALLI      | 1234567891 |
+|   222 | ARUN KUMAR | 1234567892 |
+|  NULL | HARI       | 1234567895 |
++-------+------------+------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT * FROM STUDENT5;
++------+-------+-------+
+| SNO  | SNAME | MARKS |
++------+-------+-------+
+|  111 | ARJUN |    70 |
++------+-------+-------+
+1 row in set (0.00 sec)
+
+mysql> INSERT INTO STUDENT5 VALUES(222,'ARUN',40);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO STUDENT5 VALUES(222,'ARUN',140);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM STUDENT5;
++------+-------+-------+
+| SNO  | SNAME | MARKS |
++------+-------+-------+
+|  111 | ARJUN |    70 |
+|  222 | ARUN  |    40 |
+|  222 | ARUN  |   140 |
++------+-------+-------+
+3 rows in set (0.00 sec)
+
+mysql> INSERT INTO STUDENT5 VALUES(222,'ARJUN',70);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> INSERT INTO STUDENT5 VALUES(222,'ARJUN',70);
+Query OK, 1 row affected (0.00 sec)
+
+mysql> SELECT * FROM STUDENT5;
++------+-------+-------+
+| SNO  | SNAME | MARKS |
++------+-------+-------+
+|  111 | ARJUN |    70 |
+|  222 | ARUN  |    40 |
+|  222 | ARUN  |   140 |
+|  222 | ARJUN |    70 |
+|  222 | ARJUN |    70 |
++------+-------+-------+
+5 rows in set (0.00 sec)
+
+mysql> CREATE TABLE ORDERS(
+    -> ID INT(5),
+    -> ORDERNUMBER INT(10),
+    -> ORDERDATE DATETIME DEFAULT NOW()
+    -> );
+Query OK, 0 rows affected, 2 warnings (0.04 sec)
+
+mysql> INSERT INTO ORDERS(ID,ORDERNUMBER) VALUES(12345,66836586);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM ORDERS;
++-------+-------------+---------------------+
+| ID    | ORDERNUMBER | ORDERDATE           |
++-------+-------------+---------------------+
+| 12345 |    66836586 | 2026-06-30 09:58:51 |
++-------+-------------+---------------------+
+1 row in set (0.00 sec)
+
+mysql> INSERT INTO ORDERS(ID,ORDERNUMBER) VALUES(54321,0946586);
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM ORDERS;
++-------+-------------+---------------------+
+| ID    | ORDERNUMBER | ORDERDATE           |
++-------+-------------+---------------------+
+| 12345 |    66836586 | 2026-06-30 09:58:51 |
+| 54321 |      946586 | 2026-06-30 09:59:38 |
++-------+-------------+---------------------+
+2 rows in set (0.00 sec)
+
+mysql> CREATE TABLE SCHOOL(
+    -> SNO INT(3),
+    -> SNAME VARCHAR(30),
+    -> MARKS INT(3),
+    -> PRIMARY KEY(SNO)
+    -> );
+Query OK, 0 rows affected, 2 warnings (0.03 sec)
+
+mysql> 
+mysql> CREATE TABLE LIBRARY(
+    -> SNO INT(3),
+    -> BOOK_NAME VARCHAR(30),
+    -> FOREIGN KEY(SNO)
+    -> REFERENCES SCHOOL(SNO)
+    -> );
+Query OK, 0 rows affected, 1 warning (0.04 sec)
+
+mysql> INSERT INTO SCHOOL VALUES(111,'MALLI',90),(222,'MAHI',56),(333,'ARUN',87);
+Query OK, 3 rows affected (0.03 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM SCHOOL;
++-----+-------+-------+
+| SNO | SNAME | MARKS |
++-----+-------+-------+
+| 111 | MALLI |    90 |
+| 222 | MAHI  |    56 |
+| 333 | ARUN  |    87 |
++-----+-------+-------+
+3 rows in set (0.00 sec)
+
+mysql> INSERT INTO LIBRARY VALUES(111,'JAVA');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM LIBRARY;
++------+-----------+
+| SNO  | BOOK_NAME |
++------+-----------+
+|  111 | JAVA      |
++------+-----------+
+1 row in set (0.00 sec)
+
+mysql> INSERT INTO LIBRARY VALUES(222,'C++');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM LIBRARY;
++------+-----------+
+| SNO  | BOOK_NAME |
++------+-----------+
+|  111 | JAVA      |
+|  222 | C++       |
++------+-----------+
+2 rows in set (0.00 sec)
+
+mysql> INSERT INTO LIBRARY VALUES(444,'C');
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`pfs3`.`library`, CONSTRAINT `library_ibfk_1` FOREIGN KEY (`SNO`) REFERENCES `school` (`SNO`))
+mysql> DELETE FROM SCHOOL WHERE SNO = 333;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM SCHOOL;
++-----+-------+-------+
+| SNO | SNAME | MARKS |
++-----+-------+-------+
+| 111 | MALLI |    90 |
+| 222 | MAHI  |    56 |
++-----+-------+-------+
+2 rows in set (0.00 sec)
+
+mysql> DELETE FROM SCHOOL WHERE SNO = 111;
+ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`pfs3`.`library`, CONSTRAINT `library_ibfk_1` FOREIGN KEY (`SNO`) REFERENCES `school` (`SNO`))
+mysql> UPDATE SCHOOL SET SNO = 555 WHERE SNO = 222;
+ERROR 1451 (23000): Cannot delete or update a parent row: a foreign key constraint fails (`pfs3`.`library`, CONSTRAINT `library_ibfk_1` FOREIGN KEY (`SNO`) REFERENCES `school` (`SNO`))
+mysql> DELETE FROM LIBRARY WHERE SNO = 222;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM LIBRARY;
++------+-----------+
+| SNO  | BOOK_NAME |
++------+-----------+
+|  111 | JAVA      |
++------+-----------+
+1 row in set (0.00 sec)
+
+mysql> UPDATE LIBRARY SET SNO = 333 WHERE SNO = 111;
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`pfs3`.`library`, CONSTRAINT `library_ibfk_1` FOREIGN KEY (`SNO`) REFERENCES `school` (`SNO`))
+mysql> 
+mysql> show tables;
++-----------------+
+| Tables_in_pfs3  |
++-----------------+
+| backupemployees |
+| company_staff   |
+| employee        |
+| employees       |
+| library         |
+| orders          |
+| products        |
+| school          |
+| student1        |
+| student2        |
+| student3        |
+| student4        |
+| student5        |
+| students        |
++-----------------+
+14 rows in set (0.01 sec)
+
+mysql> drop database pfs3;
+Query OK, 14 rows affected (0.17 sec)
+
+mysql> CREATE DATABASE DA3;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> USE DA3;
+Database changed
+mysql> CREATE TABLE DEPARTMENTS(
+    -> DEPT_ID INT PRIMARY KEY,
+    -> DEPT_NAME VARCHAR(30)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> CREATE TABLE EMPLOYEES(
+    -> EMP_ID INT PRIMARY KEY,
+    -> NAME VARCHAR(100),
+    -> DEPT_ID INT
+    -> FOREIGN KEY(DEPT_ID)
+    -> REFERENCES DEPARTMENTS(DEPT_ID)
+    -> ^C
+mysql> 
+mysql> CREATE TABLE EMPLOYEES(
+    -> EMP_ID INT PRIMARY KEY,
+    -> NAME VARCHAR(100),
+    -> DEPT_ID INT,
+    -> FOREIGN KEY(DEPT_ID)
+    -> REFERENCES DEPARTMENTS(DEPT_ID) ON DELETE CASCADE ON UPDATE CASCADE
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> INSERT INTO DEPARTMENTS VALUES(1,'IT'),(2,'HR'),(3,'FINANCE');
+Query OK, 3 rows affected (0.01 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM DEPARTMENTS;
++---------+-----------+
+| DEPT_ID | DEPT_NAME |
++---------+-----------+
+|       1 | IT        |
+|       2 | HR        |
+|       3 | FINANCE   |
++---------+-----------+
+3 rows in set (0.00 sec)
+
+mysql> INSERT INTO EMPLOYEES VALUES(101,'RAHUL',1),(102,'SNEHA',2),(103,'RAVI',3),(104,'MALLI',2),(105,'ARJUN',3);
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM EMPLOYEES;
++--------+-------+---------+
+| EMP_ID | NAME  | DEPT_ID |
++--------+-------+---------+
+|    101 | RAHUL |       1 |
+|    102 | SNEHA |       2 |
+|    103 | RAVI  |       3 |
+|    104 | MALLI |       2 |
+|    105 | ARJUN |       3 |
++--------+-------+---------+
+5 rows in set (0.00 sec)
+
+mysql> DELETE FROM DEPARTMENTS WHERE DEPT_ID = 2;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> SELECT * FROM EMPLOYEES;
++--------+-------+---------+
+| EMP_ID | NAME  | DEPT_ID |
++--------+-------+---------+
+|    101 | RAHUL |       1 |
+|    103 | RAVI  |       3 |
+|    105 | ARJUN |       3 |
++--------+-------+---------+
+3 rows in set (0.00 sec)
+
+mysql> UPDATE DEPARTMENTS SET DEPT_ID = 5 WHERE DEPT_ID = 3;
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM DEPARTMENTS;
++---------+-----------+
+| DEPT_ID | DEPT_NAME |
++---------+-----------+
+|       1 | IT        |
+|       5 | FINANCE   |
++---------+-----------+
+2 rows in set (0.00 sec)
+
+mysql> SELECT * FROM EMPLOYEES;
++--------+-------+---------+
+| EMP_ID | NAME  | DEPT_ID |
++--------+-------+---------+
+|    101 | RAHUL |       1 |
+|    103 | RAVI  |       5 |
+|    105 | ARJUN |       5 |
++--------+-------+---------+
+3 rows in set (0.00 sec)
+
+mysql> UPDATE EMPLOYEES SET DEPT_ID = 3 WHERE DEPT_ID = 5;
+ERROR 1452 (23000): Cannot add or update a child row: a foreign key constraint fails (`da3`.`employees`, CONSTRAINT `employees_ibfk_1` FOREIGN KEY (`DEPT_ID`) REFERENCES `departments` (`DEPT_ID`) ON DELETE CASCADE ON UPDATE CASCADE)
+mysql> NOTEE

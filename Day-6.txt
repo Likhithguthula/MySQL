@@ -1,0 +1,243 @@
+mysql> 
+mysql> use pfs3;
+Database changed
+mysql> create table students(
+    -> STDID INT,
+    -> NAME VARCHAR(100),
+    -> MOBILE VARCHAR(100)
+    -> );
+Query OK, 0 rows affected (0.06 sec)
+
+mysql> INSERT INTO STUDENTS VALUES
+    -> (111,'MALLI','1234567891'),
+    -> (222,'ARJUN','1234567892');
+Query OK, 2 rows affected (0.01 sec)
+Records: 2  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM STUDENTS;
++-------+-------+------------+
+| STDID | NAME  | MOBILE     |
++-------+-------+------------+
+|   111 | MALLI | 1234567891 |
+|   222 | ARJUN | 1234567892 |
++-------+-------+------------+
+2 rows in set (0.00 sec)
+
+mysql> CREATING THE USER-NAME
+-------------------------------
+mysql> CREATE USER ARJUN IDENTIFIED BY 'ARJUN123';
+Query OK, 0 rows affected (0.05 sec)
+
+mysql> CREATE USER SARKAR IDENTIFIED BY 'ARJUNSARKAR123';
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> GRANT SELECT,UPDATE ON STUDENTS TO ARJUN; ---------------> (INSERT THE COMMAND IN ARJUN) (OPEN C DRIVE,OPEN MYSQL, OPEN COMMAND LINE, OPEN CMD)
+								   mysql -u ARJUN -p, pass: ARJUN123
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> GRANT INSERT,UPDATE,DELETE ON STUDENTS TO SARKAR; -------------------> (INSERT THE COMMAND IN SARKAR) (OPEN C DRIVE,OPEN MYSQL, OPEN COMMAND LINE, OPEN CMD)
+										mysql -u SARKAR -p, pass: ARJUNSARKAR123
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> DELETE FROM STUDENTS WHERE STDID = 222;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> DROP TABLE STUDENTS;
+Query OK, 0 rows affected (0.03 sec)
+
+TRANSACTION
+-------------
+A transaction is a sequence of one or more SQL operations executed as a single logical unit of work.
+It ensures that either all operations are completely successfully or none of them are applied to the database.
+
+Interview one-line answer:
+--------------------------
+A transaction is a logical unit of work consisting one or more SQL statements that follows the ACID properties
+to maintain data integrity and consistency.
+
+ACID properties:
+-----------------
+A --> Atomicity : Either all operations happen or none happen.
+C --> Consistency : The database remains in a valid state before and after the transaction.
+I --> Isolation : Concurrent transactions do not interface with each other.
+D --> Durability : Once committed changes are permanen even if the system crashes.
+
+TCL Commands
+-------------
+1) Commit
+2) Rollback
+3) Save point
+
+
+
+
+
+mysql> SELECT * FROM STUDENTS;
++-------+-------+------------+
+| STDID | NAME  | MOBILE     |
++-------+-------+------------+
+|   111 | MALLI | 1234567891 |
+|   222 | ARJUN | 1234567892 |
++-------+-------+------------+
+2 rows in set (0.00 sec)
+
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> update students set name = 'arjun' where stdid = 222;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM STUDENTS;
++-------+-------+------------+
+| STDID | NAME  | MOBILE     |
++-------+-------+------------+
+|   111 | MALLI | 1234567891 |
+|   222 | arjun | 1234567892 |
++-------+-------+------------+
+2 rows in set (0.00 sec)
+
+mysql> ROLLBACK;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT * FROM STUDENTS;
++-------+-------+------------+
+| STDID | NAME  | MOBILE     |
++-------+-------+------------+
+|   111 | MALLI | 1234567891 |
+|   222 | ARJUN | 1234567892 |
++-------+-------+------------+
+2 rows in set (0.00 sec)
+
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> INSERT INTO STUDENTS VALUES(333,'VIJAY','1234567893');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> SELECT * FROM STUDENTS;
++-------+-------+------------+
+| STDID | NAME  | MOBILE     |
++-------+-------+------------+
+|   111 | MALLI | 1234567891 |
+|   222 | ARJUN | 1234567892 |
+|   333 | VIJAY | 1234567893 |
++-------+-------+------------+
+3 rows in set (0.00 sec)
+
+mysql> UPDATE STUDENTS SET NAME = 'MAHESH' WHERE STDID = 333;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SELECT * FROM STUDENTS;
++-------+--------+------------+
+| STDID | NAME   | MOBILE     |
++-------+--------+------------+
+|   111 | MALLI  | 1234567891 |
+|   222 | ARJUN  | 1234567892 |
+|   333 | MAHESH | 1234567893 |
++-------+--------+------------+
+3 rows in set (0.00 sec)
+
+mysql> DELETE FROM STUDENTS WHERE STDID = 333;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> SELECT * FROM STUDENTS;
++-------+-------+------------+
+| STDID | NAME  | MOBILE     |
++-------+-------+------------+
+|   111 | MALLI | 1234567891 |
+|   222 | ARJUN | 1234567892 |
++-------+-------+------------+
+2 rows in set (0.00 sec)
+
+mysql> ROLLBACK;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT * FROM STUDENTS;
++-------+-------+------------+
+| STDID | NAME  | MOBILE     |
++-------+-------+------------+
+|   111 | MALLI | 1234567891 |
+|   222 | ARJUN | 1234567892 |
++-------+-------+------------+
+2 rows in set (0.00 sec)
+
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> INSERT INTO STUDENTS VALUES(333,'VIJAY','1234567893');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> UPDATE STUDENTS SET NAME = 'MAHESH' WHERE STDID = 333;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> SAVEPOINT SP1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELETE FROM STUDENTS WHERE STDID = 333;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> ROLLBACK TO SP1;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT * FROM STUDENTS;
++-------+--------+------------+
+| STDID | NAME   | MOBILE     |
++-------+--------+------------+
+|   111 | MALLI  | 1234567891 |
+|   222 | ARJUN  | 1234567892 |
+|   333 | MAHESH | 1234567893 |
++-------+--------+------------+
+3 rows in set (0.00 sec)
+
+mysql> DELETE FROM STUDENTS WHERE STDID = 333;
+Query OK, 1 row affected (0.00 sec)
+
+mysql> COMMIT;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT * FROM STUDENTS;
++-------+-------+------------+
+| STDID | NAME  | MOBILE     |
++-------+-------+------------+
+|   111 | MALLI | 1234567891 |
+|   222 | ARJUN | 1234567892 |
++-------+-------+------------+
+2 rows in set (0.00 sec)
+
+mysql> -- LOCK --------------> It means that one or more members using same user database, the lock will be needed and provided. If user using different databases the lock is not 				needed.
+--------------------
+mysql> -- 1. SET TRANSACTION ISOLATION LEVEL READ COMMITED
+mysql> SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> START TRANSACTION;
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT * FROM STUDENTS WHERE STDID = 222 FOR UPDATE;
++-------+-------+------------+
+| STDID | NAME  | MOBILE     |
++-------+-------+------------+
+|   222 | ARJUN | 1234567892 |
++-------+-------+------------+
+1 row in set (0.00 sec)
+
+mysql> UPDATE STUDENTS SET NAME = 'ARUN KUMAR' WHERE STDID = 222;
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> COMMIT;
+Query OK, 0 rows affected (0.01 sec)
+
+mysql> SELECT * FROM STUDENTS;
++-------+------------+------------+
+| STDID | NAME       | MOBILE     |
++-------+------------+------------+
+|   111 | MALLI      | 1234567891 |
+|   222 | ARUN KUMAR | 1234567892 |
++-------+------------+------------+
+2 rows in set (0.00 sec)
+
+mysql> Terminal close -- exit!

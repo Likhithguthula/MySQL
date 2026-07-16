@@ -1,0 +1,642 @@
+Joins
+-------
+
+A join in MySQL is used to combine rows from two or more tables based on related columns.
+
+Example 
+--------
+employee table --> employee details
+department table --> department details
+
+if you want to see which employee belonging to which department you need to join these two tables.
+
+
+Why do we need joins ?
+---------------------------
+
+To fetch data from multiple tables in a single query
+To reduce data duplication(instead of keeping everything in one table)
+To implement relationships like (one-to-one,one-to-many,many-to-one,many-to-many) in databases
+To generate reports and analytics combing different data sets
+
+
+Types of joins
+----------------------
+
+1. Inner join : Returns only the rows that have matching values in both tables
+
+syntax : 
+
+select columns
+from table1
+inner join table2
+on table1.common_col = table2.common_col;
+
+
+2. Left Join : Returns all rows from the left table and matching rows from the right table. If there is no match, NULL values are returned.
+
+syntax :
+
+select columns
+from table1
+left join table2
+on table1.common_col = table2.common_col;
+
+3. Right Join : Returns all rows from the right table and matching rows from the left table.
+
+syntax : 
+
+select columns
+from table1
+right join table2
+on table1.common_col = table2.common_col;
+
+4. Full Join : Returns all rows from both tables. Where there is no match, NULL values are returned.
+
+to simulate use union of left join and right join
+
+syntax :
+
+select columns
+from table1
+left join table2
+on table1.common_col = table2.common_col;
+union
+select columns
+from table1
+right join table2
+on table1.common_col = table2.common_col;
+
+5. Cross Join : Returns the Cartesian product (every row from the first table combined with every row from the second table).
+
+syntax :
+
+select columns
+from table1
+cross join table2;
+
+
+6. Self join : A table is joined with itself.
+
+select a.columns,b.columns
+from table a
+inner join table1 b
+on a.common_column = b.common_column;
+
+mysql> USE DA3;
+Database changed
+mysql> CREATE TABLE TAB2(NUMID INT(3));
+Query OK, 0 rows affected, 1 warning (0.03 sec)
+
+mysql> DROP TABLE TAB2;
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> CREATE TABLE TAB1(NUMID INT(3));
+Query OK, 0 rows affected, 1 warning (0.02 sec)
+
+mysql> CREATE TABLE TAB2(NUMID INT(3));
+Query OK, 0 rows affected, 1 warning (0.05 sec)
+
+mysql> INSERT INTO TAB1 VALUES(10),(11),(12),(14);
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO TAB1 VALUES(11),(12),(13),(15);
+Query OK, 4 rows affected (0.00 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM TAB1;
++-------+
+| NUMID |
++-------+
+|    10 |
+|    11 |
+|    12 |
+|    14 |
+|    11 |
+|    12 |
+|    13 |
+|    15 |
++-------+
+8 rows in set (0.00 sec)
+
+mysql> INSERT INTO TAB2 VALUES(11),(12),(13),(15);
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM TAB2;
++-------+
+| NUMID |
++-------+
+|    11 |
+|    12 |
+|    13 |
+|    15 |
++-------+
+4 rows in set (0.00 sec)
+
+mysql> SELECT * FROM TAB1
+    -> INNER JOIN TAB2
+    -> ON
+    -> TAB1.NUMID = TAB2.NUMID;
++-------+-------+
+| NUMID | NUMID |
++-------+-------+
+|    11 |    11 |
+|    12 |    12 |
+|    11 |    11 |
+|    12 |    12 |
+|    13 |    13 |
+|    15 |    15 |
++-------+-------+
+6 rows in set (0.00 sec)
+
+mysql> -- LEFT JOIN --> MATCHED RECORDS + LEFT TABLE RECORDS;
+mysql> SELECT * FROM TAB1
+    -> LEFT JOIN TAB2
+    -> ON
+    -> TAB1.NUMID = TAB2.NUMID;
++-------+-------+
+| NUMID | NUMID |
++-------+-------+
+|    10 |  NULL |
+|    11 |    11 |
+|    12 |    12 |
+|    14 |  NULL |
+|    11 |    11 |
+|    12 |    12 |
+|    13 |    13 |
+|    15 |    15 |
++-------+-------+
+8 rows in set (0.00 sec)
+
+mysql> -- RIGHT JOIN --> MATCHED RECORDS + RIGHT TABLE RECORDS;
+mysql> SELECT * FROM TAB1
+    -> RIGHT JOIN TAB2
+    -> ON
+    -> TAB1.NUMID = TAB2.NUMID;
++-------+-------+
+| NUMID | NUMID |
++-------+-------+
+|    11 |    11 |
+|    11 |    11 |
+|    12 |    12 |
+|    12 |    12 |
+|    13 |    13 |
+|    15 |    15 |
++-------+-------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT * FROM TAB1
+    -> LEFT JOIN TAB2
+    -> ON
+    -> UNION
+    -> SELECT * FROM TAB1
+    -> RIGHT JOIN TAB2
+    -> ON
+    -> TAB1.NUMID = TAB2.NUMID;
+
+mysql> SELECT * FROM TAB1
+    -> LEFT JOIN TAB2
+    -> ON
+    -> TAB1.NUMID = TAB2.NUMID
+    -> UNION
+    -> SELECT * FROM TAB1
+    -> RIGHT JOIN TAB2
+    -> ON
+    -> TAB1.NUMID = TAB2.NUMID;
++-------+-------+
+| NUMID | NUMID |
++-------+-------+
+|    10 |  NULL |
+|    11 |    11 |
+|    12 |    12 |
+|    14 |  NULL |
+|    13 |    13 |
+|    15 |    15 |
++-------+-------+
+6 rows in set (0.00 sec)
+
+mysql> SELECT * FROM TAB1
+    -> CROSS JOIN TAB2;
++-------+-------+
+| NUMID | NUMID |
++-------+-------+
+|    10 |    15 |
+|    10 |    13 |
+|    10 |    12 |
+|    10 |    11 |
+|    11 |    15 |
+|    11 |    13 |
+|    11 |    12 |
+|    11 |    11 |
+|    12 |    15 |
+|    12 |    13 |
+|    12 |    12 |
+|    12 |    11 |
+|    14 |    15 |
+|    14 |    13 |
+|    14 |    12 |
+|    14 |    11 |
+|    11 |    15 |
+|    11 |    13 |
+|    11 |    12 |
+|    11 |    11 |
+|    12 |    15 |
+|    12 |    13 |
+|    12 |    12 |
+|    12 |    11 |
+|    13 |    15 |
+|    13 |    13 |
+|    13 |    12 |
+|    13 |    11 |
+|    15 |    15 |
+|    15 |    13 |
+|    15 |    12 |
+|    15 |    11 |
++-------+-------+
+32 rows in set (0.00 sec)
+
+mysql> DROP DATABASE DA3;
+Query OK, 14 rows affected (0.16 sec)
+
+mysql> SHOW DATABASES;
++--------------------+
+| Database           |
++--------------------+
+| information_schema |
+| mysql              |
+| performance_schema |
+| sys                |
++--------------------+
+4 rows in set (0.00 sec)
+
+mysql> CREATE DATABASE PFS3;
+Query OK, 1 row affected (0.01 sec)
+
+mysql> USE PFS3;
+Database changed
+mysql> CREATE TABLE Employees (
+    -> emp_id INT PRIMARY KEY,
+    -> name VARCHAR(100),
+    -> department_id INT,
+    -> salary DECIMAL(10,2)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> CREATE TABLE Departments (
+    -> department_id INT PRIMARY KEY,
+    -> department_name VARCHAR(100)
+    -> );
+Query OK, 0 rows affected (0.03 sec)
+
+mysql> CREATE TABLE Projects (
+    -> project_id INT PRIMARY KEY,
+    -> project_name VARCHAR(100),
+    -> emp_id INT
+    -> );
+Query OK, 0 rows affected (0.04 sec)
+
+mysql> INSERT INTO Departments (department_id, department_name) VALUES
+    -> (1, 'Human Resources'),
+    -> (2, 'Engineering'),
+    -> 
+    -> (3, 'Marketing'),
+    -> (4, 'Finance'),
+    -> (5, 'Operations');
+Query OK, 5 rows affected (0.01 sec)
+Records: 5  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO Employees (emp_id, name, department_id, salary) VALUES
+    -> (101, 'Arjun', 1, 50000),
+    -> (102, 'Bhavana', 2, 65000),
+    -> (103, 'Charan', 2, 72000),
+    -> (104, 'Divya', 3, 45000),
+    -> (105, 'Eswar', NULL, 40000),
+    -> (106, 'Farhan', 4, 55000),
+    -> (107, 'Gowri', 2, 62000),
+    -> (108, 'Harish', 5, 48000),
+    -> (109, 'Ishita', NULL, 53000),
+    -> (110, 'Jagan', 3, 60000);
+Query OK, 10 rows affected (0.00 sec)
+Records: 10  Duplicates: 0  Warnings: 0
+
+mysql> INSERT INTO Projects (project_id, project_name, emp_id) VALUES
+    -> (201, 'Website Redesign', 102),
+    -> (202, 'Mobile Banking App', 103),
+    -> (203, 'Marketing Campaign', 104),
+    -> (204, 'Payroll System', 106),
+    -> (205, 'Backend Optimization', 107),
+    -> (206, 'Cloud Migration', 102),
+    -> (207, 'Customer Analytics', 110),
+    -> (208, 'Inventory System', NULL);
+Query OK, 8 rows affected (0.01 sec)
+Records: 8  Duplicates: 0  Warnings: 0
+
+mysql> SELECT * FROM EMPLOYEES;
++--------+---------+---------------+----------+
+| emp_id | name    | department_id | salary   |
++--------+---------+---------------+----------+
+|    101 | Arjun   |             1 | 50000.00 |
+|    102 | Bhavana |             2 | 65000.00 |
+|    103 | Charan  |             2 | 72000.00 |
+|    104 | Divya   |             3 | 45000.00 |
+|    105 | Eswar   |          NULL | 40000.00 |
+|    106 | Farhan  |             4 | 55000.00 |
+|    107 | Gowri   |             2 | 62000.00 |
+|    108 | Harish  |             5 | 48000.00 |
+|    109 | Ishita  |          NULL | 53000.00 |
+|    110 | Jagan   |             3 | 60000.00 |
++--------+---------+---------------+----------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT * FROM DEPARTMENTS;
++---------------+-----------------+
+| department_id | department_name |
++---------------+-----------------+
+|             1 | Human Resources |
+|             2 | Engineering     |
+|             3 | Marketing       |
+|             4 | Finance         |
+|             5 | Operations      |
++---------------+-----------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT * FROM PROJECTS;
++------------+----------------------+--------+
+| project_id | project_name         | emp_id |
++------------+----------------------+--------+
+|        201 | Website Redesign     |    102 |
+|        202 | Mobile Banking App   |    103 |
+|        203 | Marketing Campaign   |    104 |
+|        204 | Payroll System       |    106 |
+|        205 | Backend Optimization |    107 |
+|        206 | Cloud Migration      |    102 |
+|        207 | Customer Analytics   |    110 |
+|        208 | Inventory System     |   NULL |
++------------+----------------------+--------+
+8 rows in set (0.00 sec)
+
+mysql> -- 1.GET ALL EMPLOYEES WITH THEIR DEPARTMENT NAMES
+mysql> -- 2.LIST ALL EMPLOYEES WHO ARE ASSIGNED TO A PROJECT.
+mysql> -- 3.SHOW EMPLOYEE NAMES AND DEPARTMENTS ;
+mysql> 
+mysql> SELECT E.EMP_ID,
+    -> E.NAME,D.DEPARTMENT_NAME
+    -> FROM EMPLOYEES E
+    -> INNER JOIN DEPARTMENTS D
+    -> ON E.DEPARTMENT_ID = D.DEPARTMENT_ID;
++--------+---------+-----------------+
+| EMP_ID | NAME    | DEPARTMENT_NAME |
++--------+---------+-----------------+
+|    101 | Arjun   | Human Resources |
+|    102 | Bhavana | Engineering     |
+|    103 | Charan  | Engineering     |
+|    104 | Divya   | Marketing       |
+|    106 | Farhan  | Finance         |
+|    107 | Gowri   | Engineering     |
+|    108 | Harish  | Operations      |
+|    110 | Jagan   | Marketing       |
++--------+---------+-----------------+
+8 rows in set (0.01 sec)
+
+mysql> SELECT E.NAME,P.PROJECT_NAME
+    -> FROM EMPLOYEES E
+    -> INNER JOIN PROJECTS P
+    -> ON E.EMP_ID = P.EMP_ID;
++---------+----------------------+
+| NAME    | PROJECT_NAME         |
++---------+----------------------+
+| Bhavana | Website Redesign     |
+| Charan  | Mobile Banking App   |
+| Divya   | Marketing Campaign   |
+| Farhan  | Payroll System       |
+| Gowri   | Backend Optimization |
+| Bhavana | Cloud Migration      |
+| Jagan   | Customer Analytics   |
++---------+----------------------+
+7 rows in set (0.00 sec)
+
+mysql> -- USING LEFT JOIN;
+mysql> 
+mysql> SELECT E.EMP_ID,E.NAME,D.DEPARTMENT_NAME
+    -> FROM EMPLOYEES E
+    -> LEFT JOIN
+    -> DEPARTMENT D
+    -> ON E.DEPARTMENT_ID = D.DEPARTMENT_ID;
+ERROR 1146 (42S02): Table 'pfs3.department' doesn't exist
+mysql> SELECT E.EMP_ID,E.NAME,D.DEPARTMENT_NAME
+    -> FROM EMPLOYEES E
+    -> LEFT JOIN
+    -> DEPARTMENTS D
+    -> ON E.DEPARTMENT_ID = D.DEPARTMENT_ID;
++--------+---------+-----------------+
+| EMP_ID | NAME    | DEPARTMENT_NAME |
++--------+---------+-----------------+
+|    101 | Arjun   | Human Resources |
+|    102 | Bhavana | Engineering     |
+|    103 | Charan  | Engineering     |
+|    104 | Divya   | Marketing       |
+|    105 | Eswar   | NULL            |
+|    106 | Farhan  | Finance         |
+|    107 | Gowri   | Engineering     |
+|    108 | Harish  | Operations      |
+|    109 | Ishita  | NULL            |
+|    110 | Jagan   | Marketing       |
++--------+---------+-----------------+
+10 rows in set (0.00 sec)
+
+mysql> SELECT E.NAME,P.PROJECT_NAME
+    -> FROM EMPLOYEES E
+    -> LEFT JOIN PROJECTS P 
+    -> ON E.EMP_ID = P.EMP_ID;
++---------+----------------------+
+| NAME    | PROJECT_NAME         |
++---------+----------------------+
+| Arjun   | NULL                 |
+| Bhavana | Cloud Migration      |
+| Bhavana | Website Redesign     |
+| Charan  | Mobile Banking App   |
+| Divya   | Marketing Campaign   |
+| Eswar   | NULL                 |
+| Farhan  | Payroll System       |
+| Gowri   | Backend Optimization |
+| Harish  | NULL                 |
+| Ishita  | NULL                 |
+| Jagan   | Customer Analytics   |
++---------+----------------------+
+11 rows in set (0.00 sec)
+
+mysql> SELECT D.DEPARTMENT_NAME,E.NAME
+    -> FROM DEPARTMENTS D
+    -> LEFT JOIN EMPLOYEES E
+    -> ON D.DEPARTMENT_ID = E.DEPARTMENT_ID;
++-----------------+---------+
+| DEPARTMENT_NAME | NAME    |
++-----------------+---------+
+| Human Resources | Arjun   |
+| Engineering     | Gowri   |
+| Engineering     | Charan  |
+| Engineering     | Bhavana |
+| Marketing       | Jagan   |
+| Marketing       | Divya   |
+| Finance         | Farhan  |
+| Operations      | Harish  |
++-----------------+---------+
+8 rows in set (0.01 sec)
+
+mysql> -- USING RIGHT JOIN
+mysql> 
+mysql> SELECT D.DEPARTMENT_NAME,E.NAME
+    -> FROM EMPLOYEES E
+    -> RIGHT JOIN DEPARTMENTS D
+    -> ON E.DEPARTMENT_ID = D.DEPARTMENT_ID;
++-----------------+---------+
+| DEPARTMENT_NAME | NAME    |
++-----------------+---------+
+| Human Resources | Arjun   |
+| Engineering     | Gowri   |
+| Engineering     | Charan  |
+| Engineering     | Bhavana |
+| Marketing       | Jagan   |
+| Marketing       | Divya   |
+| Finance         | Farhan  |
+| Operations      | Harish  |
++-----------------+---------+
+8 rows in set (0.00 sec)
+
+mysql> SELECT P.PROJECT_NAME,
+    -> E.NAME
+    -> FROM EMPLOYEES E
+    -> RIGHT JOIN PROJECTS P
+    -> ON E.EMP_ID = P.EMP_ID;
++----------------------+---------+
+| PROJECT_NAME         | NAME    |
++----------------------+---------+
+| Website Redesign     | Bhavana |
+| Mobile Banking App   | Charan  |
+| Marketing Campaign   | Divya   |
+| Payroll System       | Farhan  |
+| Backend Optimization | Gowri   |
+| Cloud Migration      | Bhavana |
+| Customer Analytics   | Jagan   |
+| Inventory System     | NULL    |
++----------------------+---------+
+8 rows in set (0.01 sec)
+
+mysql> SELECT E.NAME,
+    -> D.DEPARTMENT_NAME
+    -> FROM DEPARTMENTS D
+    -> RIGHT JOIN EMPLOYEES E
+    -> ON D.DEPARTMENT_ID = E.DEPARTMENT_ID;
++---------+-----------------+
+| NAME    | DEPARTMENT_NAME |
++---------+-----------------+
+| Arjun   | Human Resources |
+| Bhavana | Engineering     |
+| Charan  | Engineering     |
+| Divya   | Marketing       |
+| Eswar   | NULL            |
+| Farhan  | Finance         |
+| Gowri   | Engineering     |
+| Harish  | Operations      |
+| Ishita  | NULL            |
+| Jagan   | Marketing       |
++---------+-----------------+
+10 rows in set (0.00 sec)
+
+mysql> -- USING FULL JOIN;
+mysql> 
+mysql> SELECT E.NAME,D.DEPARTMENT_NAME
+    -> FROM EMPLOYEES E
+    -> LEFT JOIN DEPARTMENTS D
+    -> ON E.DEPARTMENT_ID = D.DEPARTMENT_ID
+    -> UNION
+    -> SELECT E.NAME,D.DEPARTMENT_NAME
+    -> FROM EMPLOYEES E
+    -> RIGHT JOIN DEPARTMENTS D
+    -> ON E.DEPARTMENT_ID = D.DEPARTMENT_ID;
++---------+-----------------+
+| NAME    | DEPARTMENT_NAME |
++---------+-----------------+
+| Arjun   | Human Resources |
+| Bhavana | Engineering     |
+| Charan  | Engineering     |
+| Divya   | Marketing       |
+| Eswar   | NULL            |
+| Farhan  | Finance         |
+| Gowri   | Engineering     |
+| Harish  | Operations      |
+| Ishita  | NULL            |
+| Jagan   | Marketing       |
++---------+-----------------+
+10 rows in set (0.01 sec)
+
+mysql> SELECT E.NAME,P.PROJECT_NAME
+    -> FROM EMPLOYEES E
+    -> LEFT JOIN PROJECTS P
+    -> ON E.EMP_ID = P.EMP_ID
+    -> UNION
+    -> SELECT E.NAME,P.PROJECT_NAME
+    -> FROM EMPLOYEES E
+    -> RIGHT JOIN PROJECTS P
+    -> ON E.EMP_ID = P.EMP_ID;
++---------+----------------------+
+| NAME    | PROJECT_NAME         |
++---------+----------------------+
+| Arjun   | NULL                 |
+| Bhavana | Cloud Migration      |
+| Bhavana | Website Redesign     |
+| Charan  | Mobile Banking App   |
+| Divya   | Marketing Campaign   |
+| Eswar   | NULL                 |
+| Farhan  | Payroll System       |
+| Gowri   | Backend Optimization |
+| Harish  | NULL                 |
+| Ishita  | NULL                 |
+| Jagan   | Customer Analytics   |
+| NULL    | Inventory System     |
++---------+----------------------+
+12 rows in set (0.00 sec)
+
+mysql> 
+mysql> SELECT D.DEPARTMENT_NAME,
+    -> COUNT(E.EMP_ID) AS TOTAL_EMPLOYEES
+    -> FROM DEPARTMENTS D
+    -> LEFT JOIN EMPLOYEES E
+    -> ON
+    -> D.DEPARTMENT_ID = E.DEPARTMENT_ID
+    -> GROUP BY D.DEPARTMENT_NAME;
++-----------------+-----------------+
+| DEPARTMENT_NAME | TOTAL_EMPLOYEES |
++-----------------+-----------------+
+| Human Resources |               1 |
+| Engineering     |               3 |
+| Marketing       |               2 |
+| Finance         |               1 |
+| Operations      |               1 |
++-----------------+-----------------+
+5 rows in set (0.00 sec)
+
+mysql> SELECT E.NAME,COUNT(P.PROJECT_ID) AS TOTAL_PROJECTS
+    -> FROM EMPLOYEES E
+    -> LEFT JOIN PROJECTS P
+    -> ON E.EMP_ID = P.EMP_ID
+    -> GROUP BY E.NAME;
++---------+----------------+
+| NAME    | TOTAL_PROJECTS |
++---------+----------------+
+| Arjun   |              0 |
+| Bhavana |              2 |
+| Charan  |              1 |
+| Divya   |              1 |
+| Eswar   |              0 |
+| Farhan  |              1 |
+| Gowri   |              1 |
+| Harish  |              0 |
+| Ishita  |              0 |
+| Jagan   |              1 |
++---------+----------------+
+10 rows in set (0.00 sec)
+
+mysql> NOTEE

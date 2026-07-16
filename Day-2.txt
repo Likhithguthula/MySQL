@@ -1,0 +1,91 @@
+Q) What is data, field, record, database ?
+-------------------------------------------
+Q) What is data ?
+-------------------
+Ans:- Raw facts or figures without context.
+Eg:- 101, Ravi, 50000, Hyd
+
+What is field ?
+-----------------
+Ans:- Smallest unit of data in a database(column/attribute).
+Eg:- Emp Name, Emp ID, Emp Salary, Emp Address
+
+What is record ?
+-----------------
+Ans:- Collection of related fields(row/tuple).
+Eg:- (111, Ravi, 60000, Vijayawada)
+
+What is database ?
+-------------------
+Ans:- Organized collection of related records stored together.
+Eg:- An employee database containing all employee records.
+
+Client-Server
+--------------
+Client:- The role of the client in client-server architecture is to send request to the server and to get response from the server.
+
+Server:- Server is software the role of the server in client-server arch is to take request from client.
+         If the request is valid request then it will generate some response we can handover that response o client.
+	 If client request is not valid request then nit will raise the errors.
+
+Protocol:- It has t set of rules and regulations.
+	   The role of the protocol in client-server arch is to send request from client to server.
+
+
+Data Models in DBMS
+====================
+Def:- A data model defines how data is stored, organized, and manipulated in a database.
+
+1. Physical Data Model:-
+-----------------------
+Def:- Describes how data is physically stored in storage devices.
+
+Audience:- Database administrators.
+
+2. Logical Data Model:-
+----------------------
+Defines the structure of data (entities, attributes, relationships) independent of physical storage areas.
+
+Audience:- Developers and data architects.
+
+3. Hierarchal Data Model:-
+-------------------------
+Data is represented as tree structure (parent child relationship).
+Eg:- Company ---> departments ---> employees
+
+4. Network Data Model:-
+----------------------
+Data is represented as graph with records (nodes) and relationships (edges)
+Eg:- student enrolled in multiple courses, courses tough by multiple professors.
+
+5. Relational Data Model (RDMS):-
+----------------------------------
+Data is stored in table (relations) with rows (tuple) and columns (attributes)
+Eg:- Student(id, name, marks, age, dep id)
+     department(dept id, dept name)
+
+6. Entity Relationship (E-R Model):-
+-------------------------------------
+A conceptual model that shows entities (things), attributes (properties) and relationships.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
